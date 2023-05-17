@@ -2,6 +2,9 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi;
 
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situatedBehaviours.FindBDI;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situatedBehaviours.RegisterDF;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -14,29 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SituatedAgent extends AbstractDedaleAgent {
+    public AID bdiAgent;
     @Override
     protected void setup() {
         super.setup();
         List<Behaviour> lb = new ArrayList<>();
-        lb.add(new OneShotBehaviour() {
-            @Override
-            public void action() {
-                Agent agent = this.myAgent;
-                DFAgentDescription dfd = new DFAgentDescription();
-                dfd.setName(agent.getAID());
-                ServiceDescription sd = new ServiceDescription();
-                sd.setName("situated-agent");
-                sd.setType("dedale");
-                dfd.addServices(sd);
-                try {
-                    DFService.register(this.myAgent, dfd);
-                    System.out.println("Situated agent registered!");
-                } catch (FIPAException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
+        lb.add(new RegisterDF());
+        lb.add(new FindBDI());
         addBehaviour(new startMyBehaviours(this, lb));
     }
 }

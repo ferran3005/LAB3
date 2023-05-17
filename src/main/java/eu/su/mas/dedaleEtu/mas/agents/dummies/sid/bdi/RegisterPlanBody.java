@@ -20,6 +20,7 @@ public class RegisterPlanBody extends BeliefGoalPlanBody {
         ServiceDescription sd = new ServiceDescription();
         sd.setName("deliberative-agent");
         sd.setType("bdi");
+        dfd.addServices(sd);
         try {
             DFService.register(this.myAgent, dfd);
             getBeliefBase().updateBelief(I_AM_REGISTERED, true);
