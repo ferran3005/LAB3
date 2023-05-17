@@ -119,6 +119,7 @@
 			<version>2.0</version>
 		</dependency>
 
+
 		<dependency>
 			<groupId>org.graphstream</groupId>
 			<artifactId>gs-algo</artifactId>
