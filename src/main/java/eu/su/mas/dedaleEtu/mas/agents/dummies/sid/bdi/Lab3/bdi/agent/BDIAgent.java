@@ -12,10 +12,14 @@ import bdi4jade.plan.DefaultPlan;
 import bdi4jade.plan.Plan;
 import bdi4jade.reasoning.*;
 import eu.su.mas.dedale.env.Location;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.ComputeNextPositionPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.FindSituatedPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.KeepMailboxEmptyPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RegisterPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SPARQLGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RequestMovementPlanBody;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RequestObservationsPlanBody;
+import jade.core.AID;
 import jade.lang.acl.MessageTemplate;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
@@ -31,15 +35,18 @@ import java.util.Stack;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.*;
 
 public class BDIAgent extends SingleCapabilityAgent {
-    private ArrayList<Location> visited;
-    private Stack<Location> stack;
-    private Stack<Location> path;
+    public ArrayList<Location> visited;
+    public Stack<Location> stack;
+    public Stack<Location> path;
+
+    public AID situatedAgent;
 
     public BDIAgent() {
         // Create initial beliefs
         Belief iAmRegistered = new TransientPredicate(I_AM_REGISTERED, false);
         Belief ontology = new TransientBelief(ONTOLOGY, loadOntology());
         Belief allMapExplored = new TransientPredicate(ALL_MAP_EXPLORED, false);
+        Belief isInfoUpdated = new TransientPredicate(IS_INFO_UPDATED, false);
 
         // Add initial desires
         Goal registerGoal = new PredicateGoal(I_AM_REGISTERED, true);
@@ -56,24 +63,33 @@ public class BDIAgent extends SingleCapabilityAgent {
         GoalTemplate allMapExploredTemplate = matchesGoal(allMapExploredGoal);
 
         // Assign plan bodies to goals
-        Plan registerPlan = new DefaultPlan(
-                registerGoalTemplate, RegisterPlanBody.class);
-        Plan findSituatedPlan = new DefaultPlan(
-                findSituatedTemplate, FindSituatedPlanBody.class);
-        Plan keepMailboxEmptyPlan = new DefaultPlan(MessageTemplate.MatchAll(),
-                KeepMailboxEmptyPlanBody.class);
-        //TODO: MAKE PLANS TO ACT BASED ON STATE PURSUING EXPLORE ALL MAP
+        Plan registerPlan = new DefaultPlan(registerGoalTemplate, RegisterPlanBody.class);
+        Plan findSituatedPlan = new DefaultPlan(findSituatedTemplate, FindSituatedPlanBody.class);
+        Plan keepMailboxEmptyPlan = new DefaultPlan(MessageTemplate.MatchAll(), KeepMailboxEmptyPlanBody.class);//TODO: Esto se puede fragmentar como
+        //TODO -->
+//        Plan ObservationProtocolPlan = new DefaultPlan(MessageTemplate.MatchProtocol(OBSERVATIONS_PROTOCOL), ObservationProtocolMessagePlan.class);
+//        Plan MovedProtocolPlan = new DefaultPlan(MessageTemplate.MatchProtocol(MOVED_PROTOCOL), MovedProtocolMessagePlan.class);
+        //TODO <--
+
+        Plan requestObservationPlan = requestObservationsPlan(allMapExploredTemplate); //Only sends a message requesting information
+        Plan computeNextPositionPlan = computeNextPositionPlan(allMapExploredTemplate); //Does the actual DFS and whole calculation to decide on next position
+        Plan RequestMovementPlan = requestMovementPlan(allMapExploredTemplate); //Only sends a message requesting movement
+
 
         // Init plan library
         getCapability().getPlanLibrary().addPlan(registerPlan);
         getCapability().getPlanLibrary().addPlan(findSituatedPlan);
         getCapability().getPlanLibrary().addPlan(keepMailboxEmptyPlan);
-        //TODO: ADD PLANS TO PLAN LIBRARY
+
+        getCapability().getPlanLibrary().addPlan(requestObservationPlan);
+        getCapability().getPlanLibrary().addPlan(computeNextPositionPlan);
+        getCapability().getPlanLibrary().addPlan(RequestMovementPlan);
 
         // Init belief base
         getCapability().getBeliefBase().addBelief(iAmRegistered);
         getCapability().getBeliefBase().addBelief(ontology);
         getCapability().getBeliefBase().addBelief(allMapExplored);
+        getCapability().getBeliefBase().addBelief(isInfoUpdated);
 
         // Add a goal listener to track events
         enableGoalMonitoring();
@@ -166,5 +182,33 @@ public class BDIAgent extends SingleCapabilityAgent {
         dm.addAltEntry("example", fileAsResource.toString());
         model.read("example");
         return model;
+    }
+
+    private Plan requestObservationsPlan(GoalTemplate allMapExploredTemplate) {
+        return new DefaultPlan(allMapExploredTemplate, RequestObservationsPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                boolean isInfoUpdated = (boolean) getCapability().getBeliefBase().getBelief(IS_INFO_UPDATED).getValue();
+                return !isInfoUpdated;
+            }
+        };
+    }
+    private Plan requestMovementPlan(GoalTemplate allMapExploredTemplate) {
+        return new DefaultPlan(allMapExploredTemplate, RequestMovementPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                // TODO
+                return false;
+            }
+        };
+    }
+    private Plan computeNextPositionPlan(GoalTemplate allMapExploredTemplate) {
+        return new DefaultPlan(allMapExploredTemplate, ComputeNextPositionPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                // TODO
+                return false;
+            }
+        };
     }
 }
