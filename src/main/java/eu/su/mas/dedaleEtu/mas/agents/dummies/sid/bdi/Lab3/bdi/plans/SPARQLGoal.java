@@ -1,4 +1,4 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
 
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.BeliefBase;
@@ -7,7 +7,6 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 

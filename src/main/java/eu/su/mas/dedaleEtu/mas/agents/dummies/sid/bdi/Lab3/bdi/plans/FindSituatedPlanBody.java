@@ -1,9 +1,8 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
 
 import bdi4jade.belief.Belief;
 import bdi4jade.core.SingleCapabilityAgent;
 import bdi4jade.plan.Plan;
-import bdi4jade.plan.planbody.AbstractPlanBody;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
 import jade.core.AID;
 import jade.domain.DFService;
@@ -13,7 +12,7 @@ import jade.domain.FIPAException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 
-import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Constants.ONTOLOGY;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
 
 public class FindSituatedPlanBody extends BeliefGoalPlanBody {
     @Override

@@ -1,8 +1,6 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situatedBehaviours;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.behaviours;
 
-import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.SituatedAgent;
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;

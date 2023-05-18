@@ -1,4 +1,4 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
 
 import bdi4jade.annotation.Parameter;
 import bdi4jade.plan.Plan;
@@ -17,5 +17,11 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
     @Parameter(direction = Parameter.Direction.IN)
     public void setMessage(ACLMessage msgReceived) {
         this.msgReceived = msgReceived;
+    }
+
+    @Override
+    public int onEnd() {
+        System.out.println("Mailbox emptied: " + this.msgReceived);
+        return 0;
     }
 }

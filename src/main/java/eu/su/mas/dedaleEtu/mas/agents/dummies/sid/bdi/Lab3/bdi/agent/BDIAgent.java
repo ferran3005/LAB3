@@ -1,4 +1,4 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent;
 
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.TransientBelief;
@@ -11,34 +11,49 @@ import bdi4jade.goal.*;
 import bdi4jade.plan.DefaultPlan;
 import bdi4jade.plan.Plan;
 import bdi4jade.reasoning.*;
+import eu.su.mas.dedale.env.Location;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.FindSituatedPlanBody;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.KeepMailboxEmptyPlanBody;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RegisterPlanBody;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.SPARQLGoal;
 import jade.lang.acl.MessageTemplate;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.impl.StatementImpl;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.Stack;
 
-import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Constants.*;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.*;
 
 public class BDIAgent extends SingleCapabilityAgent {
+    private ArrayList<Location> visited;
+    private Stack<Location> stack;
+    private Stack<Location> path;
+
     public BDIAgent() {
         // Create initial beliefs
         Belief iAmRegistered = new TransientPredicate(I_AM_REGISTERED, false);
         Belief ontology = new TransientBelief(ONTOLOGY, loadOntology());
+        Belief allMapExplored = new TransientPredicate(ALL_MAP_EXPLORED, false);
 
         // Add initial desires
         Goal registerGoal = new PredicateGoal(I_AM_REGISTERED, true);
         Goal findSituatedGoal = new SPARQLGoal(ONTOLOGY, QUERY_SITUATED_AGENT);
+        Goal allMapExploredGoal = new PredicateGoal(ALL_MAP_EXPLORED, true);
+
         addGoal(registerGoal);
         addGoal(findSituatedGoal);
+        addGoal(allMapExploredGoal);
 
         // Declare goal templates
         GoalTemplate registerGoalTemplate = matchesGoal(registerGoal);
         GoalTemplate findSituatedTemplate = matchesGoal(findSituatedGoal);
+        GoalTemplate allMapExploredTemplate = matchesGoal(allMapExploredGoal);
 
         // Assign plan bodies to goals
         Plan registerPlan = new DefaultPlan(
@@ -47,15 +62,18 @@ public class BDIAgent extends SingleCapabilityAgent {
                 findSituatedTemplate, FindSituatedPlanBody.class);
         Plan keepMailboxEmptyPlan = new DefaultPlan(MessageTemplate.MatchAll(),
                 KeepMailboxEmptyPlanBody.class);
+        //TODO: MAKE PLANS TO ACT BASED ON STATE PURSUING EXPLORE ALL MAP
 
         // Init plan library
         getCapability().getPlanLibrary().addPlan(registerPlan);
         getCapability().getPlanLibrary().addPlan(findSituatedPlan);
         getCapability().getPlanLibrary().addPlan(keepMailboxEmptyPlan);
+        //TODO: ADD PLANS TO PLAN LIBRARY
 
         // Init belief base
         getCapability().getBeliefBase().addBelief(iAmRegistered);
         getCapability().getBeliefBase().addBelief(ontology);
+        getCapability().getBeliefBase().addBelief(allMapExplored);
 
         // Add a goal listener to track events
         enableGoalMonitoring();

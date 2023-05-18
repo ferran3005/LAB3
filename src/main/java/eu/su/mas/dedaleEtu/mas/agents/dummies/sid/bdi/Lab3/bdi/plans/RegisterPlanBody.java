@@ -1,7 +1,6 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
 
 import bdi4jade.plan.Plan;
-import bdi4jade.plan.planbody.AbstractPlanBody;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -9,7 +8,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
-import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Constants.I_AM_REGISTERED;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.I_AM_REGISTERED;
 
 public class RegisterPlanBody extends BeliefGoalPlanBody {
     @Override
