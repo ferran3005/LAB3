@@ -15,7 +15,7 @@ import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.FindSituatedPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.KeepMailboxEmptyPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RegisterPlanBody;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.SPARQLGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SPARQLGoal;
 import jade.lang.acl.MessageTemplate;
 import org.apache.jena.ontology.OntDocumentManager;
 import org.apache.jena.ontology.OntModel;

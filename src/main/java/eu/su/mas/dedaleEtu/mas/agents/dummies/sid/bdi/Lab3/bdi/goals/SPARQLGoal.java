@@ -1,4 +1,4 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals;
 
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.BeliefBase;
