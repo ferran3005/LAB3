@@ -14,6 +14,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 
 public class FindSituatedPlanBody extends BeliefGoalPlanBody {
     @Override
@@ -44,9 +45,6 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
         SingleCapabilityAgent agent = (SingleCapabilityAgent) this.myAgent;
         Belief b = agent.getCapability().getBeliefBase().getBelief(ONTOLOGY);
         Model model = (Model) b.getValue();
-        model.add(new StatementImpl(
-                model.createResource("http://example#" + situatedAgentName),
-                model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                model.getResource("http://example#Agent")));
+        ((BDIAgent) this.myAgent).ontologyManager.addExplorer(situatedAgentName, model);
     }
 }

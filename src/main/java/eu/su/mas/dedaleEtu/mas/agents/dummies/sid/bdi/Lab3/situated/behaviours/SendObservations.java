@@ -6,6 +6,7 @@ import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.States;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 
@@ -30,5 +31,6 @@ public class SendObservations extends OneShotBehaviour {
         msg.setProtocol(OBSERVATIONS_PROTOCOL);
         msg.setContent(new Gson().toJson(observations));
         myAgent.send(msg);
+        ((SituatedAgent)this.myAgent).currentState = States.OBSERVATIONS_SENT;
     }
 }

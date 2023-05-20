@@ -13,6 +13,7 @@ import java.util.List;
 
 public class SituatedAgent extends AbstractDedaleAgent {
     public AID bdiAgent;
+    public States currentState = States.NO_UPDATES_SENT;
     @Override
     protected void setup() {
         super.setup();
