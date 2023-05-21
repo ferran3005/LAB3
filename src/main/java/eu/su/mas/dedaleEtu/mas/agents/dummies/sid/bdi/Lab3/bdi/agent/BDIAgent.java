@@ -200,21 +200,4 @@ public class BDIAgent extends SingleCapabilityAgent {
             }
         };
     }
-    private Plan requestMovementPlan(GoalTemplate allMapExploredTemplate) {
-        return new DefaultPlan(allMapExploredTemplate, RequestMovementPlanBody.class) {
-            @Override
-            public boolean isContextApplicable(Goal goal) {
-                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.UPDATED);
-            }
-        };
-    }
-    private Plan computeNextPositionPlan(GoalTemplate movementGoalTemplate) {
-        return new DefaultPlan(movementGoalTemplate, ComputeNextPositionPlanBody.class) {
-            @Override
-            public boolean isContextApplicable(Goal goal) {
-                // TODO si el belief de movement no existe o es distinto de refused
-                return false;
-            }
-        };
-    }
 }
