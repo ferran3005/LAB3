@@ -17,6 +17,7 @@ public class Constants {
     //public static String MOVEMENT_PROTOCOL = "MOVEMENT";
     public static String MOVEMENT_PROTOCOL = "REQUEST";
     public static String ONTOLOGY = "ontology";
+    public static String AGENT_STATE = "agentState";
 
     public static String ONTOLOGY_NAMESPACE = "http://www.semanticweb.org/usuari/ontologies/P2_ontologia";
     public static String QUERY_SITUATED_AGENT =

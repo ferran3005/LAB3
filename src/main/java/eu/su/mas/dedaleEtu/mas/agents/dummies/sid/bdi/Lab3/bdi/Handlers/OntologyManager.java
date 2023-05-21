@@ -1,4 +1,4 @@
-package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Ontology;
+package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers;
 
 import eu.su.mas.dedale.env.Observation;
 import org.apache.jena.ontology.Individual;
@@ -9,6 +9,12 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 
 public class OntologyManager {
+
+    public String getSituatedPosition(Model model, String situatedAgentName) {
+        Individual agent = ((OntModel)model).getIndividual(ONTOLOGY_NAMESPACE + "#" + situatedAgentName);
+        agent.getProperty(model.getProperty(ONTOLOGY_NAMESPACE + "#is_in")).getResource();
+        return "";
+    }
     public void addExplorer(String situatedAgentName, Model model) {
         model.add(new StatementImpl(
                 model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
@@ -24,6 +30,11 @@ public class OntologyManager {
                 model.getResource(ONTOLOGY_NAMESPACE + "#Node")));
 
         model.add(new StatementImpl(
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#position_id"),
+                model.createTypedLiteral(Integer.valueOf(locationId))));
+
+        model.add(new StatementImpl(
                 model.getResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
                 model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId)
@@ -37,6 +48,11 @@ public class OntologyManager {
                     model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode),
                     model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
                     model.getResource(ONTOLOGY_NAMESPACE + "#Node")));
+
+            model.add(new StatementImpl(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode),
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#position_id"),
+                    model.createTypedLiteral(Integer.valueOf(adjacentNode))));
 
             model.add(
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + originNode),
