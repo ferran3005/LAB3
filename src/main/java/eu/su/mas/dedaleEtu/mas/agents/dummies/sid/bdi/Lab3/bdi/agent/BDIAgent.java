@@ -53,7 +53,6 @@ public class BDIAgent extends SingleCapabilityAgent {
         // Create initial beliefs
         Belief iAmRegistered = new TransientPredicate(I_AM_REGISTERED, false);
         Belief ontology = new TransientBelief(ONTOLOGY, loadOntology());
-       // Belief allMapExplored = new TransientPredicate(ALL_MAP_EXPLORED, false);
         Belief isInfoUpdated = new TransientPredicate(IS_INFO_UPDATED, false);
 
         // Add initial desires

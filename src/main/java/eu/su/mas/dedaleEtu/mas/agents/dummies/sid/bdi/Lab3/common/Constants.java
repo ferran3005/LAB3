@@ -1,5 +1,14 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common;
 
+import com.google.gson.reflect.TypeToken;
+import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.Location;
+import eu.su.mas.dedale.env.Observation;
+import eu.su.mas.dedale.env.gs.gsLocation;
+
+import java.lang.reflect.Type;
+import java.util.List;
+
 public class Constants {
     public static String I_AM_REGISTERED = "IAmRegistered";
     public static String ALL_MAP_EXPLORED = "AllMapExplored";
@@ -14,4 +23,17 @@ public class Constants {
                     "SELECT ?Agent where {" +
                     " ?Agent a NAMESPACE:Explorer ."+
                     "}";
+
+    public static String QUERY_SITUATED_AGENT_POSITION =
+            "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
+            "SELECT ?Position where {" +
+            " ?Agent a NAMESPACE:Explorer ."+
+            " ?Agent NAMESPACE:hasPosition ?Position ."+
+            "}";
+
+    public static Type observationsType() {
+        return new TypeToken<List<Couple<gsLocation, List<Couple<Observation, Integer>>>>>(){}.getType();
+
+    }
+
 }
