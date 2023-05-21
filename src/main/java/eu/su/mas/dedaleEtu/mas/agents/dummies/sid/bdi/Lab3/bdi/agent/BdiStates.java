@@ -4,5 +4,6 @@ public enum BdiStates {
     INITIAL,
     UPDATE_REQUEST_SENT,
     UPDATED,
+    MOVEMENT_COMPUTED,
     MOVEMENT_REQUEST_SENT
 }
