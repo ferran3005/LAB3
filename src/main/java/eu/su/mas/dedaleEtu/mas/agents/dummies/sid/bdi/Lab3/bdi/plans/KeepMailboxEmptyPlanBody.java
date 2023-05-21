@@ -38,6 +38,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
         if (!(boolean) beliefBase.getBelief(IS_INFO_UPDATED).getValue()
                 && msgReceived.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
             updateOntologyWithObservations(msgReceived.getContent());
+            //TODO goalMove();
             beliefBase.updateBelief(IS_INFO_UPDATED, true);
         }
         if ((boolean) beliefBase.getBelief(IS_INFO_UPDATED).getValue()
@@ -85,4 +86,6 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
             }
         }
     }
+
+
 }

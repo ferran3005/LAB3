@@ -14,7 +14,8 @@ public class Constants {
     public static String ALL_MAP_EXPLORED = "AllMapExplored";
     public static String IS_INFO_UPDATED = "IsInfoUpdated";
     public static String OBSERVATIONS_PROTOCOL = "OBSERVATIONS";
-    public static String MOVEMENT_PROTOCOL = "MOVEMENT";
+    //public static String MOVEMENT_PROTOCOL = "MOVEMENT";
+    public static String MOVEMENT_PROTOCOL = "REQUEST";
     public static String ONTOLOGY = "ontology";
 
     public static String ONTOLOGY_NAMESPACE = "http://www.semanticweb.org/usuari/ontologies/P2_ontologia";
