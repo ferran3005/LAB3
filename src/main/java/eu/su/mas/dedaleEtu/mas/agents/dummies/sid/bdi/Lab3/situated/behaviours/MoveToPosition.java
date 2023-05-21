@@ -1,5 +1,6 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.behaviours;
 
+import bdi4jade.annotation.Parameter;
 import com.google.gson.Gson;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
@@ -35,9 +36,10 @@ public class MoveToPosition extends  OneShotBehaviour{
 
 
     public void succesMove(){
-        //No hay INFORM-DONE por eso he puesto confirm
-        msg.setPerformative(ACLMessage.CONFIRM);
+        String position = ((AbstractDedaleAgent) this.myAgent).getCurrentPosition().toString();
+        msg.setPerformative(ACLMessage.INFORM);
         msg.setProtocol(MOVEMENT_PROTOCOL);
+        msg.setContent(position + ";" + msg.getContent());
         myAgent.send(msg);
         ((SituatedAgent)this.myAgent).currentState = States.NO_UPDATES_SENT;
     }
