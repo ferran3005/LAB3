@@ -4,6 +4,9 @@ import bdi4jade.annotation.Parameter;
 import bdi4jade.annotation.Parameter.Direction;
 import bdi4jade.belief.TransientBelief;
 import bdi4jade.belief.BeliefBase;
+import bdi4jade.goal.Goal;
+import bdi4jade.goal.GoalTemplate;
+import bdi4jade.plan.DefaultPlan;
 import bdi4jade.plan.Plan;
 import bdi4jade.plan.planbody.AbstractPlanBody;
 import com.google.gson.Gson;
@@ -12,6 +15,9 @@ import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNextPositionGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.ActionResult;
 import jade.lang.acl.ACLMessage;
 import org.apache.jena.rdf.model.Model;
@@ -53,10 +59,6 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
     public int onEnd() {
         return 0;
     }
-    private void addComputePositionGoal() {
-
-        //TODO añadir goal de calcular posición y como planes posibles los de movimiento
-    }
     private void updateOntologyWithObservations(String json) {
         String situatedAgentName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
         Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
@@ -91,18 +93,72 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
         else if(message.getPerformative() == ACLMessage.REFUSE) {
             ((BDIAgent)this.myAgent).dfsHandler.discardTop();
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
-            //todo: calcular siguiente posicion
+            addComputeNextPositionGoal();
         }
         else if(message.getPerformative() == ACLMessage.FAILURE) {
-            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
-            //todo: calcular siguiente posicion
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
+            addRequestMovementGoal();
         }
         else if(message.getPerformative() == ACLMessage.INFORM) {
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
+            addRequestUpdateGoal();
             //TODO: nos llega couple <String, String> con oldLocation y newLocation
             //Todo: actualizar path + stack y pedir updates
         }
     }
 
+    void addRequestUpdateGoal() {
+        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal();
+        getCapability().getMyAgent().addGoal(sendUpdateRequestGoal);
+        GoalTemplate sendUpdateRequestGoalTemplate = matchesGoal(sendUpdateRequestGoal);
+        Plan requestObservationPlan = requestObservationsPlan(sendUpdateRequestGoalTemplate);
+        getCapability().getPlanLibrary().addPlan(requestObservationPlan);
+    }
+    void addComputeNextPositionGoal() {
+        Goal computeNextPositionGoal = new ComputeNextPositionGoal();
+        getCapability().getMyAgent().addGoal(computeNextPositionGoal);
+        GoalTemplate computeNextPositionGoalTemplate = matchesGoal(computeNextPositionGoal);
+        Plan computeNextMovementPlan = computeNextMovementPlan(computeNextPositionGoalTemplate);
+        getCapability().getPlanLibrary().addPlan(computeNextMovementPlan);
+    }
+    void addRequestMovementGoal() {
+        Goal sendMovementRequestGoal = new SendMovementRequestGoal();
+        getCapability().getMyAgent().addGoal(sendMovementRequestGoal);
+        GoalTemplate sendMovementRequestGoalTemplate = matchesGoal(sendMovementRequestGoal);
+        Plan requestMovementPlan = requestMovementPlan(sendMovementRequestGoalTemplate);
+        getCapability().getPlanLibrary().addPlan(requestMovementPlan);
+    }
 
+    private GoalTemplate matchesGoal(Goal goalToMatch) {
+        return new GoalTemplate() {
+            @Override
+            public boolean match(Goal goal) {
+                return goal == goalToMatch;
+            }
+        };
+    }
+    private Plan requestObservationsPlan(GoalTemplate sendUpdateRequestGoalTemplate) {
+        return new DefaultPlan(sendUpdateRequestGoalTemplate, RequestObservationsPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.INITIAL);
+            }
+        };
+    }
+    private Plan computeNextMovementPlan(GoalTemplate computeNextMovementGoalTemplate) {
+        return new DefaultPlan(computeNextMovementGoalTemplate, ComputeNextPositionPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.UPDATED);
+            }
+        };
+    }
+    private Plan requestMovementPlan(GoalTemplate sendMovementRequestGoalTemplate) {
+        return new DefaultPlan(sendMovementRequestGoalTemplate, RequestMovementPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.MOVEMENT_COMPUTED);
+            }
+        };
+    }
 }

@@ -3,6 +3,7 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
 import bdi4jade.annotation.Parameter.Direction;
 import bdi4jade.belief.Belief;
 import bdi4jade.belief.TransientBelief;
+import bdi4jade.plan.Plan;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
@@ -27,6 +28,7 @@ public class RequestObservationsPlanBody extends BeliefGoalPlanBody {
 
         Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.UPDATE_REQUEST_SENT);
         getCapability().getBeliefBase().addOrUpdateBelief(agentState);
+        setEndState(Plan.EndState.SUCCESSFUL);
         //TODO: poner tiemout
     }
 }
