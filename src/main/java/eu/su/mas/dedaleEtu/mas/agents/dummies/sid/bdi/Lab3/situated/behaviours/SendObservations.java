@@ -27,7 +27,7 @@ public class SendObservations extends OneShotBehaviour {
         sendObservations(lobs);
     }
     public void sendObservations(List<Couple<Location, List<Couple<Observation, Integer>>>> observations) {
-        msg.setPerformative(ACLMessage.AGREE);
+        msg.setPerformative(ACLMessage.INFORM);
         msg.setProtocol(OBSERVATIONS_PROTOCOL);
         msg.setContent(new Gson().toJson(observations));
         myAgent.send(msg);
