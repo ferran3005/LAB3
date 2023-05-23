@@ -30,7 +30,6 @@ public class RequestMovementPlanBody extends BeliefGoalPlanBody {
 
         Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.MOVEMENT_REQUEST_SENT);
         getCapability().getBeliefBase().addOrUpdateBelief(agentState);
-        setEndState(Plan.EndState.SUCCESSFUL);
         //TODO: poner tiemout
     }
 }

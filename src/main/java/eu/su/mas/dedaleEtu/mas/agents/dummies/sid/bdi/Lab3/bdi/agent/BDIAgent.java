@@ -161,8 +161,8 @@ public class BDIAgent extends SingleCapabilityAgent {
             @Override
             public void goalPerformed(GoalEvent goalEvent) {
                 if(goalEvent.getStatus() == GoalStatus.ACHIEVED) {
-                    System.out.println("BDI: " + goalEvent.getGoal() + " " +
-                            "fulfilled!");
+//                    System.out.println("BDI: " + goalEvent.getGoal() + " " +
+//                            "fulfilled!");
                 }
             }
         });

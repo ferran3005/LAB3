@@ -14,7 +14,7 @@ public class Constants {
     public static String IS_INFO_UPDATED = "IsInfoUpdated";
     public static String OBSERVATIONS_PROTOCOL = "OBSERVATIONS";
     //public static String MOVEMENT_PROTOCOL = "MOVEMENT";
-    public static String MOVEMENT_PROTOCOL = "REQUEST";
+    public static String MOVEMENT_PROTOCOL = "MOVEMENT";
     public static String ONTOLOGY = "ontology";
     public static String AGENT_STATE = "agentState";
     public static String COMPUTED_POSITION = "computedPosition";

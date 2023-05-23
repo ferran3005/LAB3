@@ -26,6 +26,7 @@ public class DFSHandler {
     public Stack<Location> path;
 
     public void updateStack(String ObservationsJson) {
+
         List<Couple<Location, List<Couple<Observation, Integer>>>> observations =
                 new Gson().fromJson(ObservationsJson, observationsType());
         if(!contains(observations.get(0).getLeft(), visited))  {
@@ -42,16 +43,19 @@ public class DFSHandler {
 
             if (!contains(obs.getLeft(), visited) && !(currentWind && obsWind)) stack.push(obs.getLeft());
         }
+        System.out.println("Stack: " + stack);
     }
 
     public void updateAfterMovement(String oldLocationId, String newLocationId) {
         Location newLocation = new gsLocation(newLocationId);
+        Location oldLocation = new gsLocation(oldLocationId);
         if(contains(newLocation, visited))  {
             path.pop();
         }
         else {
-            visited.add(stack.pop());
-            path.push(new gsLocation(oldLocationId));
+            Location pathSegment = stack.pop();
+            visited.add(pathSegment);
+            path.push(oldLocation);
         }
     }
 

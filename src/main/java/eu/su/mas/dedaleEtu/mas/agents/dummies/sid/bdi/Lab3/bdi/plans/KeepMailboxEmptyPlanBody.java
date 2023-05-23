@@ -37,17 +37,18 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
     }
 
     @Parameter(direction = Parameter.Direction.IN)
-    public void setMessage(ACLMessage msgReceived) {
+    public void setMessage(ACLMessage msgReceived) throws InterruptedException {
         BeliefBase beliefBase = getCapability().getBeliefBase();
         BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
         if ((agentState.equals(BdiStates.UPDATE_REQUEST_SENT) || agentState.equals(BdiStates.UPDATE_REQUEST_AGREED))
                 && msgReceived.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
             handleObservationResponses(msgReceived);
         }
-        if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
+        else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
                 && msgReceived.getProtocol().equals(MOVEMENT_PROTOCOL)) {
             handleMovementResponses(msgReceived);
         }
+        setEndState(Plan.EndState.SUCCESSFUL);
         ((BDIAgent)getCapability().getMyAgent()).log.add(new Couple<>(msgReceived, Direction.IN));
     }
 
@@ -103,10 +104,8 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
             ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
-
+            getCapability().getMyAgent().doWait(500);
             addRequestUpdateGoal();
-            //TODO: nos llega couple <String, String> con oldLocation y newLocation
-            //Todo: actualizar path + stack y pedir updates
         }
     }
 
@@ -124,21 +123,21 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
     }
 
     void addRequestUpdateGoal() {
-        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE);
+        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE + "UpdateReq");
         getCapability().getMyAgent().addGoal(sendUpdateRequestGoal);
         GoalTemplate sendUpdateRequestGoalTemplate = matchesGoal(sendUpdateRequestGoal);
         Plan requestObservationPlan = requestObservationsPlan(sendUpdateRequestGoalTemplate);
         getCapability().getPlanLibrary().addPlan(requestObservationPlan);
     }
     void addComputeNextPositionGoal() {
-        Goal computeNextPositionGoal = new ComputeNextPositionGoal(AGENT_STATE);
+        Goal computeNextPositionGoal = new ComputeNextPositionGoal(AGENT_STATE + "Compute");
         getCapability().getMyAgent().addGoal(computeNextPositionGoal);
         GoalTemplate computeNextPositionGoalTemplate = matchesGoal(computeNextPositionGoal);
         Plan computeNextMovementPlan = computeNextMovementPlan(computeNextPositionGoalTemplate);
         getCapability().getPlanLibrary().addPlan(computeNextMovementPlan);
     }
     void addRequestMovementGoal() {
-        Goal sendMovementRequestGoal = new SendMovementRequestGoal(AGENT_STATE);
+        Goal sendMovementRequestGoal = new SendMovementRequestGoal(AGENT_STATE + "MoveReq");
         getCapability().getMyAgent().addGoal(sendMovementRequestGoal);
         GoalTemplate sendMovementRequestGoalTemplate = matchesGoal(sendMovementRequestGoal);
         Plan requestMovementPlan = requestMovementPlan(sendMovementRequestGoalTemplate);
