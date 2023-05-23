@@ -48,7 +48,6 @@ public class CanIMove extends OneShotBehaviour {
         msg.setPerformative(ACLMessage.REFUSE);
         msg.setProtocol(MOVEMENT_PROTOCOL);
         myAgent.send(msg);
-        //((SituatedAgent)this.myAgent).currentState = States.OBSERVATIONS_SENT;
     }
 
     public void agreePetition(){

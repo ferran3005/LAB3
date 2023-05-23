@@ -2,7 +2,6 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
 
 import bdi4jade.annotation.Parameter;
 import bdi4jade.annotation.Parameter.Direction;
-import bdi4jade.belief.TransientBelief;
 import bdi4jade.belief.BeliefBase;
 import bdi4jade.goal.Goal;
 import bdi4jade.goal.GoalTemplate;
@@ -18,19 +17,19 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNextPositionGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.ActionResult;
 import jade.lang.acl.ACLMessage;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.AGENT_STATE;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.COMPUTED_POSITION;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.MOVEMENT_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.OBSERVATIONS_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.observationsType;
 
-public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
+public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO de lo que hay aquí se puede extraer em handlers (i.e. sparql queries, message handling, goals, etc.)
 
     @Override
     public void action() {
@@ -38,17 +37,14 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
     }
 
     @Parameter(direction = Parameter.Direction.IN)
-    public void listen(ACLMessage msgReceived) {
+    public void setMessage(ACLMessage msgReceived) {
         BeliefBase beliefBase = getCapability().getBeliefBase();
-        if (beliefBase.getBelief(AGENT_STATE).getValue().equals(BdiStates.UPDATE_REQUEST_SENT)
+        BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
+        if ((agentState.equals(BdiStates.UPDATE_REQUEST_SENT) || agentState.equals(BdiStates.UPDATE_REQUEST_AGREED))
                 && msgReceived.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
-
-            updateOntologyWithObservations(msgReceived.getContent());
-            ((BDIAgent)this.myAgent).dfsHandler.updateStack(msgReceived.getContent());
-            beliefBase.updateBelief(AGENT_STATE, BdiStates.UPDATED);
-            //TODO: goal + plan de compute position
+            handleObservationResponses(msgReceived);
         }
-        if (beliefBase.getBelief(AGENT_STATE).getValue().equals(BdiStates.MOVEMENT_REQUEST_SENT)
+        if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
                 && msgReceived.getProtocol().equals(MOVEMENT_PROTOCOL)) {
             handleMovementResponses(msgReceived);
         }
@@ -88,41 +84,61 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {
 
     private void handleMovementResponses(ACLMessage message) {
         if(message.getPerformative() == ACLMessage.AGREE) {
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_REQUEST_AGREED);
             //Todo: reset timeout
         }
-        else if(message.getPerformative() == ACLMessage.REFUSE) {
-            ((BDIAgent)this.myAgent).dfsHandler.discardTop();
+        else if(message.getPerformative() == ACLMessage.REFUSE) { //todo: si nos rechazan, significa que el agente situado decide descartar la ruta por X motivo (peligro de muerte)
+            ((BDIAgent)getCapability().getMyAgent()).dfsHandler.discardTop();
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
             addComputeNextPositionGoal();
         }
-        else if(message.getPerformative() == ACLMessage.FAILURE) {
+        else if(message.getPerformative() == ACLMessage.FAILURE) { //todo: si falla, significa que hay algún agente en medio y hay que hacer retry
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
             addRequestMovementGoal();
         }
         else if(message.getPerformative() == ACLMessage.INFORM) {
+            Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
+            String previousLocation = ((BDIAgent)getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model);
+            String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
+
+            ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
+
             addRequestUpdateGoal();
             //TODO: nos llega couple <String, String> con oldLocation y newLocation
             //Todo: actualizar path + stack y pedir updates
         }
     }
 
+    private void handleObservationResponses(ACLMessage message) {
+        if(message.getPerformative() == ACLMessage.AGREE) {
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATE_REQUEST_AGREED);
+            //Todo: reset timeout
+        }
+        else if(message.getPerformative() == ACLMessage.INFORM) {
+            updateOntologyWithObservations(message.getContent());
+            ((BDIAgent)getCapability().getMyAgent()).dfsHandler.updateStack(message.getContent());
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
+            addComputeNextPositionGoal();
+        }
+    }
+
     void addRequestUpdateGoal() {
-        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal();
+        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE);
         getCapability().getMyAgent().addGoal(sendUpdateRequestGoal);
         GoalTemplate sendUpdateRequestGoalTemplate = matchesGoal(sendUpdateRequestGoal);
         Plan requestObservationPlan = requestObservationsPlan(sendUpdateRequestGoalTemplate);
         getCapability().getPlanLibrary().addPlan(requestObservationPlan);
     }
     void addComputeNextPositionGoal() {
-        Goal computeNextPositionGoal = new ComputeNextPositionGoal();
+        Goal computeNextPositionGoal = new ComputeNextPositionGoal(AGENT_STATE);
         getCapability().getMyAgent().addGoal(computeNextPositionGoal);
         GoalTemplate computeNextPositionGoalTemplate = matchesGoal(computeNextPositionGoal);
         Plan computeNextMovementPlan = computeNextMovementPlan(computeNextPositionGoalTemplate);
         getCapability().getPlanLibrary().addPlan(computeNextMovementPlan);
     }
     void addRequestMovementGoal() {
-        Goal sendMovementRequestGoal = new SendMovementRequestGoal();
+        Goal sendMovementRequestGoal = new SendMovementRequestGoal(AGENT_STATE);
         getCapability().getMyAgent().addGoal(sendMovementRequestGoal);
         GoalTemplate sendMovementRequestGoalTemplate = matchesGoal(sendMovementRequestGoal);
         Plan requestMovementPlan = requestMovementPlan(sendMovementRequestGoalTemplate);

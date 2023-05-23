@@ -5,6 +5,7 @@ import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.LabAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.States;
 import jade.core.behaviours.OneShotBehaviour;
@@ -24,6 +25,7 @@ public class SendObservations extends OneShotBehaviour {
     @Override
     public void action() {
         List<Couple<Location, List<Couple<Observation, Integer>>>> lobs = ((AbstractDedaleAgent)this.myAgent).observe();
+        sendAgree();
         sendObservations(lobs);
     }
     public void sendObservations(List<Couple<Location, List<Couple<Observation, Integer>>>> observations) {
@@ -32,5 +34,11 @@ public class SendObservations extends OneShotBehaviour {
         msg.setContent(new Gson().toJson(observations));
         myAgent.send(msg);
         ((SituatedAgent)this.myAgent).currentState = States.OBSERVATIONS_SENT;
+    }
+    private void sendAgree() {
+        ACLMessage agreeMsg = new ACLMessage(ACLMessage.AGREE);
+        agreeMsg.setProtocol(OBSERVATIONS_PROTOCOL);
+        agreeMsg.addReceiver(((SituatedAgent)this.myAgent).bdiAgent);
+        this.myAgent.send(agreeMsg);
     }
 }

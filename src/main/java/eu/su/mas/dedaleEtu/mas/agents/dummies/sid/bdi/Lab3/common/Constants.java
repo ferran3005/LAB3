@@ -2,7 +2,6 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common;
 
 import com.google.gson.reflect.TypeToken;
 import dataStructures.tuple.Couple;
-import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.gs.gsLocation;
 
@@ -18,7 +17,7 @@ public class Constants {
     public static String MOVEMENT_PROTOCOL = "REQUEST";
     public static String ONTOLOGY = "ontology";
     public static String AGENT_STATE = "agentState";
-
+    public static String COMPUTED_POSITION = "computedPosition";
     public static String ONTOLOGY_NAMESPACE = "http://www.semanticweb.org/usuari/ontologies/P2_ontologia";
     public static String QUERY_SITUATED_AGENT =
                     "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
@@ -28,10 +27,23 @@ public class Constants {
 
     public static String QUERY_SITUATED_AGENT_POSITION =
             "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
-            "SELECT ?Position where {" +
+            "SELECT ?Position_id where {" +
             " ?Agent a NAMESPACE:Explorer ."+
-            " ?Agent NAMESPACE:hasPosition ?Position ."+
+            " ?Agent NAMESPACE:is_in ?Position ."+
+            " ?Position NAMESPACE:position_id ?Position_id ."+
             "}";
+
+    public static String QUERY_ADJACENT_CELLS(String locationId)
+    {
+        return "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
+                "SELECT ?adjacentLocationId " +
+                "where {" +
+                "?cell a NAMESPACE:Node ." +
+                "?cell NAMESPACE:position_id " + locationId + " ." +
+                "?cell NAMESPACE:is_adjacent_to ?adjacentCell ." +
+                "?adjacentCell NAMESPACE:position_id ?adjacentLocationId ."+
+                "}";
+    }
 
     public static Type observationsType() {
         return new TypeToken<List<Couple<gsLocation, List<Couple<Observation, Integer>>>>>(){}.getType();

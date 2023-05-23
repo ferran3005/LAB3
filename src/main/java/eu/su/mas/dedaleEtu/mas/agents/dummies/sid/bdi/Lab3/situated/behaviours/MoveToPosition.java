@@ -29,17 +29,15 @@ public class MoveToPosition extends  OneShotBehaviour{
     public void action() {
 
         if(((AbstractDedaleAgent) this.myAgent).moveTo(new gsLocation(msg.getContent()))){
-            succesMove();
+            successMove();
         }
         else failMove();
     }
 
 
-    public void succesMove(){
-        String position = ((AbstractDedaleAgent) this.myAgent).getCurrentPosition().toString();
+    public void successMove(){
         msg.setPerformative(ACLMessage.INFORM);
         msg.setProtocol(MOVEMENT_PROTOCOL);
-        msg.setContent(position + ";" + msg.getContent());
         myAgent.send(msg);
         ((SituatedAgent)this.myAgent).currentState = States.NO_UPDATES_SENT;
     }

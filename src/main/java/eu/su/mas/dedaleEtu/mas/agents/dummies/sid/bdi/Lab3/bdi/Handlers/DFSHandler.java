@@ -19,7 +19,6 @@ public class DFSHandler {
         visited = new ArrayList<>();
         stack = new Stack<>();
         path = new Stack<>();
-//        visited.add(new gsLocation());
     }
 
     public ArrayList<Location> visited;
@@ -58,6 +57,13 @@ public class DFSHandler {
 
     public void discardTop() {
         stack.pop();
+    }
+
+    public String computeNextPosition(List<String> adjacentNodes) {
+        if (adjacentNodes.contains(stack.peek().getLocationId())) {
+            return stack.peek().getLocationId();
+        }
+        return path.peek().getLocationId();
     }
 
     private Boolean contains(Location loc, List<Location> locations) {

@@ -54,12 +54,11 @@ public class BDIAgent extends SingleCapabilityAgent {
         Belief iAmRegistered = new TransientPredicate(I_AM_REGISTERED, false);
         Belief ontology = new TransientBelief(ONTOLOGY, loadOntology());
         Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.INITIAL);
-        Belief isInfoUpdated = new TransientPredicate(IS_INFO_UPDATED, false);
 
         // Add initial desires
         Goal registerGoal = new PredicateGoal(I_AM_REGISTERED, true);
         Goal findSituatedGoal = new SPARQLGoal(ONTOLOGY, QUERY_SITUATED_AGENT);
-        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal();
+        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE);
 
         addGoal(registerGoal);
         addGoal(findSituatedGoal);
@@ -88,15 +87,11 @@ public class BDIAgent extends SingleCapabilityAgent {
         getCapability().getPlanLibrary().addPlan(keepMailboxEmptyPlan);
 
         getCapability().getPlanLibrary().addPlan(requestObservationPlan);
-//        getCapability().getPlanLibrary().addPlan(computeNextPositionPlan);
-//        getCapability().getPlanLibrary().addPlan(RequestMovementPlan);
 
         // Init belief base
         getCapability().getBeliefBase().addBelief(iAmRegistered);
         getCapability().getBeliefBase().addBelief(agentState);
         getCapability().getBeliefBase().addBelief(ontology);
-//        getCapability().getBeliefBase().addBelief(allMapExplored);
-        getCapability().getBeliefBase().addBelief(isInfoUpdated);
 
         // Add a goal listener to track events
         enableGoalMonitoring();

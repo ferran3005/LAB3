@@ -7,8 +7,12 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.AGENT_STATE;
 
 public class SendUpdateRequestGoal<K> extends AbstractBeliefGoal<K> {
+
+    public SendUpdateRequestGoal(K beliefName) {
+        super(beliefName);
+    }
     @Override
     public boolean isAchieved(BeliefBase beliefBase) {
-        return beliefBase.getBelief(AGENT_STATE).getValue().equals(BdiStates.UPDATE_REQUEST_SENT);
+        return beliefBase.getBelief(AGENT_STATE).getValue().equals(BdiStates.UPDATE_REQUEST_AGREED);
     }
 }
