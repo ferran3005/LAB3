@@ -90,8 +90,8 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         }
         else if(message.getPerformative() == ACLMessage.REFUSE) { //todo: si nos rechazan, significa que el agente situado decide descartar la ruta por X motivo (peligro de muerte)
             ((BDIAgent)getCapability().getMyAgent()).dfsHandler.discardTop();
-            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
-            addComputeNextPositionGoal();
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
+            addRequestUpdateGoal();
         }
         else if(message.getPerformative() == ACLMessage.FAILURE) { //todo: si falla, significa que hay algún agente en medio y hay que hacer retry
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);

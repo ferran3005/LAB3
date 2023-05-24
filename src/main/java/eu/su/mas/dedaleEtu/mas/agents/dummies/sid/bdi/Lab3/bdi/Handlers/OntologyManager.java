@@ -61,6 +61,16 @@ public class OntologyManager {
                 model.getProperty(ONTOLOGY_NAMESPACE + "#position_id"),
                 model.createTypedLiteral(Integer.valueOf(locationId))));
 
+        String currentPosition = getSituatedPosition(model);
+
+        if(currentPosition != null) {
+            model.remove(new StatementImpl(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + currentPosition)
+            ));
+        }
+
         model.add(new StatementImpl(
                 model.getResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
                 model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
