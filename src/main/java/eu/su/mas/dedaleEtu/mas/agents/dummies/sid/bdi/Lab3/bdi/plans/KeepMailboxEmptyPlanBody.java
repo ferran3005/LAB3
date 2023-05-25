@@ -104,7 +104,6 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
             ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
-            getCapability().getMyAgent().doWait(500);
             addRequestUpdateGoal();
         }
     }
@@ -116,9 +115,11 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         }
         else if(message.getPerformative() == ACLMessage.INFORM) {
             updateOntologyWithObservations(message.getContent());
-            ((BDIAgent)getCapability().getMyAgent()).dfsHandler.updateStack(message.getContent());
-            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
-            addComputeNextPositionGoal();
+            boolean notEmptyStack = ((BDIAgent)getCapability().getMyAgent()).dfsHandler.updateStack(message.getContent());
+            if(notEmptyStack) {
+                getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
+                addComputeNextPositionGoal();
+            }
         }
     }
 

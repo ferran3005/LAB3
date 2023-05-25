@@ -5,6 +5,9 @@ import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.gs.gsLocation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.States;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import weka.core.stemmers.Stemmer;
@@ -47,10 +50,12 @@ public class CanIMove extends OneShotBehaviour {
     public void refusePetition(){
         msg.setPerformative(ACLMessage.REFUSE);
         msg.setProtocol(MOVEMENT_PROTOCOL);
+        ((SituatedAgent)this.myAgent).currentState = States.NO_UPDATES_SENT;
         myAgent.send(msg);
     }
 
     public void agreePetition(){
+        ((SituatedAgent)this.myAgent).currentState = States.MOVEMENT_AGREED;
         msg.setPerformative(ACLMessage.AGREE);
         msg.setProtocol(MOVEMENT_PROTOCOL);
         myAgent.send(msg);

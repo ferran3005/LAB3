@@ -17,12 +17,10 @@ import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.DFSHandler;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.ComputeNextPositionPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.FindSituatedPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.KeepMailboxEmptyPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RegisterPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SPARQLGoal;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RequestMovementPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RequestObservationsPlanBody;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
@@ -35,6 +33,8 @@ import org.apache.jena.rdf.model.ModelFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -60,9 +60,8 @@ public class BDIAgent extends SingleCapabilityAgent {
         Goal findSituatedGoal = new SPARQLGoal(ONTOLOGY, QUERY_SITUATED_AGENT);
         Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE);
 
-        addGoal(registerGoal);
-        addGoal(findSituatedGoal);
-        addGoal(sendUpdateRequestGoal);
+        SequentialGoal orderedGoals = new SequentialGoal(Arrays.asList(registerGoal, findSituatedGoal, sendUpdateRequestGoal));
+        addGoal(orderedGoals);
 
         // Declare goal templates
         GoalTemplate registerGoalTemplate = matchesGoal(registerGoal);

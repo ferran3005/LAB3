@@ -14,6 +14,6 @@ public class ComputeNextPositionGoal<K> extends AbstractBeliefGoal<K> {
 
     @Override
     public boolean isAchieved(BeliefBase beliefBase) {
-        return beliefBase.getBelief(AGENT_STATE).getValue().equals(BdiStates.MOVEMENT_COMPUTED);
+        return beliefBase.getBelief(AGENT_STATE).getValue().equals(BdiStates.UPDATE_REQUEST_SENT);
     }
 }

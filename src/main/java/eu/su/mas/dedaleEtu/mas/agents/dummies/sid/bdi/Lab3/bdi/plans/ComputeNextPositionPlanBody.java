@@ -6,6 +6,7 @@ import bdi4jade.goal.Goal;
 import bdi4jade.goal.GoalTemplate;
 import bdi4jade.plan.DefaultPlan;
 import bdi4jade.plan.Plan;
+import bdi4jade.plan.Plan.EndState;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
@@ -38,6 +39,7 @@ public class ComputeNextPositionPlanBody extends BeliefGoalPlanBody {
         getCapability().getBeliefBase().addOrUpdateBelief(new TransientBelief(COMPUTED_POSITION, nextMove));
         getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
         addRequestMovementGoal();
+        setEndState(EndState.SUCCESSFUL);
     }
 
     private GoalTemplate matchesGoal(Goal goalToMatch) {
