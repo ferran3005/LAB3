@@ -30,26 +30,27 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.observationsType;
 
 public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO de lo que hay aquí se puede extraer em handlers (i.e. sparql queries, message handling, goals, etc.)
-
+    private ACLMessage message;
     @Override
     public void action() {
         setEndState(Plan.EndState.SUCCESSFUL);
+        BeliefBase beliefBase = getCapability().getBeliefBase();
+        BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
+        if ((agentState.equals(BdiStates.UPDATE_REQUEST_SENT) || agentState.equals(BdiStates.UPDATE_REQUEST_AGREED))
+                && message.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
+            handleObservationResponses(message);
+        }
+        else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
+                && message.getProtocol().equals(MOVEMENT_PROTOCOL)) {
+            handleMovementResponses(message);
+        }
+        setEndState(Plan.EndState.SUCCESSFUL);
+        ((BDIAgent)getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
     }
 
     @Parameter(direction = Parameter.Direction.IN)
     public void setMessage(ACLMessage msgReceived) throws InterruptedException {
-        BeliefBase beliefBase = getCapability().getBeliefBase();
-        BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
-        if ((agentState.equals(BdiStates.UPDATE_REQUEST_SENT) || agentState.equals(BdiStates.UPDATE_REQUEST_AGREED))
-                && msgReceived.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
-            handleObservationResponses(msgReceived);
-        }
-        else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
-                && msgReceived.getProtocol().equals(MOVEMENT_PROTOCOL)) {
-            handleMovementResponses(msgReceived);
-        }
-        setEndState(Plan.EndState.SUCCESSFUL);
-        ((BDIAgent)getCapability().getMyAgent()).log.add(new Couple<>(msgReceived, Direction.IN));
+        message = msgReceived;
     }
 
     @Override
@@ -57,6 +58,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         return 0;
     }
     private void updateOntologyWithObservations(String json) {
+
         String situatedAgentName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
         Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
 
