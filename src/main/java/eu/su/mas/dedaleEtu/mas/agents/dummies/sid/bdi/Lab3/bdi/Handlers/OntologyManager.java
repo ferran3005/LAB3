@@ -12,6 +12,7 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 
+import java.time.Instant;
 import java.util.List;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
@@ -47,6 +48,18 @@ public class OntologyManager {
                 model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
                 model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
                 model.getResource(ONTOLOGY_NAMESPACE + "#Explorer")));
+    }
+
+    public void addAgent(String situatedAgentName, String type, Model model) {
+        model.add(new StatementImpl(
+                model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
+                model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                model.getResource(ONTOLOGY_NAMESPACE + "#" + type)));
+
+        model.getProperty(
+                model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
+        ).changeLiteralObject(Instant.now().toEpochMilli());
     }
 
     public void addCurrentPosition(String situatedAgentName, String locationId, Model model) {

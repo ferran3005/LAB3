@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/usuari/ontologies/P2_ontologia/"
+     xml:base="http://www.semanticweb.org/usuari/ontologies/P2_ontologia/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#contains -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#contains">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Map"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#hasObservation -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#hasObservation">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#has_agent -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#has_agent">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_in"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_adjacent_to -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_adjacent_to">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#IrreflexiveProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_in -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_in">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#LastUpdated -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#LastUpdated">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#unsignedLong"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#position_id -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#position_id">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#value -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#value">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#AdjacentToTank -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#AdjacentToTank">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_adjacent_to"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#HasTank"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Agent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Agent"/>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#DeployCollector -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#DeployCollector">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_in"/>
+                        <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#AdjacentToTank"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Diamond -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Diamond">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Gold"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Explorer -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Explorer">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Gold -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Gold">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Golem -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Golem">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#HasTank -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#HasTank">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#has_agent"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Tanker"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#LockIsOpen -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#LockIsOpen">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Lockpicking -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Lockpicking">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Map -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Map"/>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Agent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node">
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#None -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#None">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Stench -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Stench">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Strength -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Strength">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Tanker -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Tanker">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.25.2023-02-15T19:15:49Z) https://github.com/owlcs/owlapi -->
+

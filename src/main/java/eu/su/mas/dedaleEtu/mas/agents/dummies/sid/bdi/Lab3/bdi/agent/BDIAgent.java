@@ -175,7 +175,7 @@ public class BDIAgent extends SingleCapabilityAgent {
     private Model loadOntology() {
         OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_MICRO_RULE_INF);
         OntDocumentManager dm = model.getDocumentManager();
-        URL fileAsResource = getClass().getClassLoader().getResource("ontologia.rdf");
+        URL fileAsResource = getClass().getClassLoader().getResource("Ontologia_final-v1.rdf");
         dm.addAltEntry(ONTOLOGY_NAMESPACE, fileAsResource.toString());
         model.read(ONTOLOGY_NAMESPACE);
 
