@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNextPositionGoal;
@@ -64,6 +65,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
         List<Couple<Location, List<Couple<Observation, Integer>>>> observations =
                 new Gson().fromJson(json, observationsType());
+        //TODO llamar a Ontologymanager para actualizar las hojas
         String originLocationId = observations.get(0).getLeft().getLocationId();
         ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(
                 situatedAgentName,
@@ -104,6 +106,10 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             String previousLocation = ((BDIAgent)getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model);
             String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
 
+            // public void addCurrentPosition(String situatedAgentName, String locationId, Model model)
+            String situatedAgentName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
+            ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
+           // ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(situatedAgentName, originLocationId, model);
             ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();
