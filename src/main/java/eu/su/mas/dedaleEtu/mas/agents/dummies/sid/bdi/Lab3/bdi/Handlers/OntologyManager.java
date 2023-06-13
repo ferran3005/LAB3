@@ -136,69 +136,36 @@ public class OntologyManager {
                         model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
                         model.getResource(ONTOLOGY_NAMESPACE + "#Observation")
                 ));
+                String aux = null;
                 if (!isNotResource(observation)) {
-                    if (observation == Observation.GOLD) {
-                        model.add(new StatementImpl(
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                                model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Gold")
-                        ));
-                    }
-                    else if (observation == Observation.DIAMOND) {
-                        model.add(new StatementImpl(
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                                model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Diamond")
-                        ));
-                    }
-                    else{ //OBS = NONE
-                        model.add(new StatementImpl(
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                                model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                                model.getResource(ONTOLOGY_NAMESPACE + "#None")
-                        ));
-                    }
+
+                    if (observation == Observation.GOLD) aux = "#Gold";
+                    else if (observation == Observation.DIAMOND) aux = "#Diamond";
+                    else aux = "#None"; //OBS = NONE
+
+                    model.add(new StatementImpl(
+                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
+                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                            model.getResource(ONTOLOGY_NAMESPACE + aux)
+                    ));
                     model.add(new StatementImpl(
                             model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
                             model.getProperty(ONTOLOGY_NAMESPACE + "#value"),
                             model.createTypedLiteral(value)
                     ));
                 }
-                else if (observation == Observation.WIND){
-                    model.add(new StatementImpl(
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Wind")
-                    ));
-                }
-                else if(observation == Observation.LOCKPICKING){
-                    model.add(new StatementImpl(
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Lockpicking")
-                    ));
-                }
-                else if(observation == Observation.STENCH){
-                    model.add(new StatementImpl(
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Stench")
-                    ));
-                }
-                else if(observation == Observation.STRENGH){
-                    model.add(new StatementImpl(
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Strength")
-                    ));
-                }
-                else if(observation == Observation.LOCKSTATUS){ //TODO falta este de la ontologia
-                    model.add(new StatementImpl(
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                            model.getResource(ONTOLOGY_NAMESPACE + "#LockIsOpen")
-                    ));
-                }
+                else if (observation == Observation.WIND)  aux = "#Wind";
+                else if(observation == Observation.LOCKPICKING) aux = "#Lockpicking";
+                else if(observation == Observation.STENCH) aux = "#Stench";
+                else if(observation == Observation.STRENGH) aux = "#Strength";
+                else if(observation == Observation.LOCKSTATUS) aux = "#LockIsOpen"; //TODO falta este de la ontologia
+
+                model.add(new StatementImpl(
+                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
+                        model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                        model.getResource(ONTOLOGY_NAMESPACE + aux)
+                ));
+
                 model.add(new StatementImpl(
                         model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId),
                         model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
