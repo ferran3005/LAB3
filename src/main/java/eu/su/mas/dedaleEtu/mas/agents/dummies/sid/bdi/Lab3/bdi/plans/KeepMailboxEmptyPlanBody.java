@@ -78,14 +78,6 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                     obs.getLeft().getLocationId(),
                     model); //añadimos la posición adyacente
 
-//            if(obs.getRight().stream()
-//                    .noneMatch(o -> o.getLeft().equals(Observation.GOLD) || o.getLeft().equals(Observation.DIAMOND))) {
-//                ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addObservation(
-//                        obs.getLeft().getLocationId(),
-//                        Observation.NO_TREASURE,
-//                        0,
-//                        model);
-//            }
             for(Couple<Observation, Integer> observation: obs.getRight()) {
                 ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addObservation(
                         obs.getLeft().getLocationId(),
