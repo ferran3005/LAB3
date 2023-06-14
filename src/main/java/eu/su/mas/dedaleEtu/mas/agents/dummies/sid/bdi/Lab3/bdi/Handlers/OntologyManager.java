@@ -1,6 +1,8 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers;
 
+import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
+import eu.su.mas.dedale.env.gs.gsLocation;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
@@ -17,9 +19,17 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.Stack;
 
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_ADJACENT_CELLS;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_SITUATED_AGENT_POSITION;
@@ -37,6 +47,43 @@ public class OntologyManager {
             return String.valueOf(solution.get("Position_id").asLiteral().getInt());
         }
         return null;
+    }
+
+    public Stack<Location> shortestPathToTarget(String target, Model model) {
+        Queue<String> queue = new LinkedList<>();
+        List<String> visited = new ArrayList<>();
+        Map<String, String> pathMap = new HashMap<>();
+
+        String currentPosition = getSituatedPosition(model);
+
+        queue.add(currentPosition);
+        visited.add(currentPosition);
+
+        while (!queue.isEmpty()) {
+            String position = queue.poll();
+            if (position.equals(target)) { //TODO: modificar para funcion de checkeo
+                return buildPath(position, pathMap);
+            }
+            List<String> adjacentCells = getAdjacentCells(model, position);
+            for (String adjacentCell : adjacentCells) {
+                if (!visited.contains(adjacentCell)) {
+                    queue.add(adjacentCell);
+                    visited.add(adjacentCell);
+                    pathMap.put(adjacentCell, position);
+                }
+            }
+        }
+        return new Stack<>();
+    }
+
+    private Stack<Location> buildPath(String target, Map<String, String> pathMap) {
+        Stack<Location> path = new Stack<>();
+        String currentLocation = target;
+        while (pathMap.containsKey(currentLocation)) {
+            path.push(new gsLocation(currentLocation));
+            currentLocation = pathMap.get(currentLocation);
+        }
+        return path;
     }
 
     public List<String> getAdjacentCells(Model model, String currentPosition) {

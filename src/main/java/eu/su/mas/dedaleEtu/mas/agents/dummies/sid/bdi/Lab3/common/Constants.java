@@ -19,13 +19,13 @@ public class Constants {
     public static String AGENT_STATE = "agentState";
     public static String COMPUTED_POSITION = "computedPosition";
     public static String ONTOLOGY_NAMESPACE = "http://www.semanticweb.org/usuari/ontologies/P2_ontologia";
-    public static String QUERY_SITUATED_AGENT =
+    public static String QUERY_SITUATED_AGENT = //TODO: esto está hardcodeado con explorer, actualizarlo con AID
                     "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
                     "SELECT ?Agent where {" +
                     " ?Agent a NAMESPACE:Explorer ."+
                     "}";
 
-    public static String QUERY_SITUATED_AGENT_POSITION =
+    public static String QUERY_SITUATED_AGENT_POSITION = //TODO: esto está hardcodeado con explorer, actualizarlo con AID
             "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
             "SELECT ?Position_id where {" +
             " ?Agent a NAMESPACE:Explorer ."+
