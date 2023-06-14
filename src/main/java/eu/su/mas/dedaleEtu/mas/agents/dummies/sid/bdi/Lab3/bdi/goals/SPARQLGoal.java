@@ -13,10 +13,6 @@ import java.util.Objects;
 public class SPARQLGoal<K> extends AbstractBeliefGoal<K> {
     private final String queryString;
 
-    public SPARQLGoal() {
-        queryString = null;
-    }
-
     public SPARQLGoal(K beliefName, String queryString) {
         super(beliefName);
         this.queryString = queryString;

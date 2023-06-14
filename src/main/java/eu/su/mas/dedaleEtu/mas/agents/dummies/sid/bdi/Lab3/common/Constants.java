@@ -19,34 +19,35 @@ public class Constants {
     public static String AGENT_STATE = "agentState";
     public static String COMPUTED_POSITION = "computedPosition";
     public static String ONTOLOGY_NAMESPACE = "http://www.semanticweb.org/usuari/ontologies/P2_ontologia";
-    public static String QUERY_SITUATED_AGENT = //TODO: esto está hardcodeado con explorer, actualizarlo con AID
-                    "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
+    public static String QUERY_SITUATED_AGENT =
+            "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
                     "SELECT ?Agent where {" +
-                    " ?Agent a NAMESPACE:Explorer ."+
+                    " ?Agent a NAMESPACE:Agent ." +
                     "}";
 
-    public static String QUERY_SITUATED_AGENT_POSITION = //TODO: esto está hardcodeado con explorer, actualizarlo con AID
-            "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
-            "SELECT ?Position_id where {" +
-            " ?Agent a NAMESPACE:Explorer ."+
-            " ?Agent NAMESPACE:is_in ?Position ."+
-            " ?Position NAMESPACE:position_id ?Position_id ."+
-            "}";
+    public static String QUERY_SITUATED_AGENT_POSITION(String situatedName) { //TODO: esto está hardcodeado con explorer, actualizarlo con AID
+        return "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
+                "SELECT ?Position_id where {" +
+                " BIND(<" + ONTOLOGY_NAMESPACE + "#" + situatedName + "> as ?Agent) ." +
+                " ?Agent NAMESPACE:is_in ?Position ." +
+                " ?Position NAMESPACE:position_id ?Position_id ." +
+                "}";
+    }
 
-    public static String QUERY_ADJACENT_CELLS(String locationId)
-    {
+    public static String QUERY_ADJACENT_CELLS(String locationId) {
         return "PREFIX NAMESPACE: <" + ONTOLOGY_NAMESPACE + "#> " +
                 "SELECT ?adjacentLocationId " +
                 "where {" +
                 "?cell a NAMESPACE:Node ." +
                 "?cell NAMESPACE:position_id " + locationId + " ." +
                 "?cell NAMESPACE:is_adjacent_to ?adjacentCell ." +
-                "?adjacentCell NAMESPACE:position_id ?adjacentLocationId ."+
+                "?adjacentCell NAMESPACE:position_id ?adjacentLocationId ." +
                 "}";
     }
 
     public static Type observationsType() {
-        return new TypeToken<List<Couple<gsLocation, List<Couple<Observation, Integer>>>>>(){}.getType();
+        return new TypeToken<List<Couple<gsLocation, List<Couple<Observation, Integer>>>>>() {
+        }.getType();
 
     }
 

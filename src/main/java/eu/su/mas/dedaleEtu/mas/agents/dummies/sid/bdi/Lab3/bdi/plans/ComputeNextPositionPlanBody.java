@@ -24,15 +24,14 @@ import java.util.List;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.AGENT_STATE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.COMPUTED_POSITION;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
-import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_ADJACENT_CELLS;
-import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_SITUATED_AGENT_POSITION;
 
 public class ComputeNextPositionPlanBody extends BeliefGoalPlanBody {
     @Override
     protected void execute() {
 
         Model model = (Model) getBeliefBase().getBelief(ONTOLOGY).getValue();
-        String currentPosition = ((BDIAgent) this.myAgent).ontologyManager.getSituatedPosition(model);
+        String situatedName = ((BDIAgent) this.myAgent).situatedAgent.getLocalName();
+        String currentPosition = ((BDIAgent) this.myAgent).ontologyManager.getSituatedPosition(model, situatedName);
         List<String>  adjacentNodes = ((BDIAgent) this.myAgent).ontologyManager.getAdjacentCells(model, currentPosition);
 
         String nextMove = ((BDIAgent) this.myAgent).dfsHandler.computeNextPosition(adjacentNodes);

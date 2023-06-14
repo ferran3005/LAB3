@@ -6,7 +6,6 @@ import eu.su.mas.dedale.env.gs.gsLocation;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.impl.IndividualImpl;
 import org.apache.jena.ontology.impl.OntModelImpl;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -20,24 +19,23 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.Stack;
 
-import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_ADJACENT_CELLS;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_SITUATED_AGENT_POSITION;
 
+
 public class OntologyManager {
 
-    public String getSituatedPosition(Model model) {
-        Query query = QueryFactory.create(QUERY_SITUATED_AGENT_POSITION);
+    public String getSituatedPosition(Model model, String situatedName) {
+
+        Query query = QueryFactory.create(QUERY_SITUATED_AGENT_POSITION(situatedName));
         QueryExecution qe = QueryExecutionFactory.create(query, model);
         List<QuerySolution> results = Lists.newArrayList(qe.execSelect());
         qe.close();
@@ -49,12 +47,12 @@ public class OntologyManager {
         return null;
     }
 
-    public Stack<Location> shortestPathToTarget(String target, Model model) {
+    public Stack<Location> shortestPathToTarget(String target, Model model, String situatedName) {
         Queue<String> queue = new LinkedList<>();
         List<String> visited = new ArrayList<>();
         Map<String, String> pathMap = new HashMap<>();
 
-        String currentPosition = getSituatedPosition(model);
+        String currentPosition = getSituatedPosition(model, situatedName);
 
         queue.add(currentPosition);
         visited.add(currentPosition);
@@ -136,7 +134,7 @@ public class OntologyManager {
                 model.getProperty(ONTOLOGY_NAMESPACE + "#position_id"),
                 model.createTypedLiteral(Integer.valueOf(locationId))));
 
-        String currentPosition = getSituatedPosition(model);
+        String currentPosition = getSituatedPosition(model, situatedAgentName);
 
         if (currentPosition != null) {
             model.remove(new StatementImpl(

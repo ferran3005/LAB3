@@ -103,8 +103,9 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             addRequestMovementGoal();
         }
         else if(message.getPerformative() == ACLMessage.INFORM) {
+            String situatedName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
             Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
-            String previousLocation = ((BDIAgent)getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model);
+            String previousLocation = ((BDIAgent)getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model, situatedName);
             String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
 
             // public void addCurrentPosition(String situatedAgentName, String locationId, Model model)
