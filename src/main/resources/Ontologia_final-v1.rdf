@@ -106,7 +106,7 @@
     <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#value -->
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#value">
-        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
     </owl:DatatypeProperty>
     
@@ -225,9 +225,9 @@
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Lockpicking -->
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#LockPicking -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Lockpicking">
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#LockPicking">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
     </owl:Class>
     
@@ -247,18 +247,34 @@
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node -->
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#NoTreasure -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node">
-        <owl:disjointWith rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#NoTreasure">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#hasObservation"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">0</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Diamond"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#hasObservation"/>
+                        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">0</owl:qualifiedCardinality>
+                        <owl:onClass rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Gold"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#None -->
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#None">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node">
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
     </owl:Class>
     
 
@@ -301,9 +317,9 @@
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind -->
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#WIND -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind">
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#WIND">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
     </owl:Class>
 </rdf:RDF>

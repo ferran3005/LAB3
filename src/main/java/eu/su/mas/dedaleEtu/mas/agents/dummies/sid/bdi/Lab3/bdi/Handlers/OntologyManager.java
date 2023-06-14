@@ -4,6 +4,7 @@ import eu.su.mas.dedale.env.Observation;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.impl.IndividualImpl;
 import org.apache.jena.ontology.impl.OntModelImpl;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -11,10 +12,13 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_ADJACENT_CELLS;
@@ -44,6 +48,7 @@ public class OntologyManager {
                 .map(querySolution -> String.valueOf(querySolution.get("adjacentLocationId").asLiteral().getInt()))
                 .collect(java.util.stream.Collectors.toList());
     }
+
     public void addExplorer(String situatedAgentName, Model model) {
         model.add(new StatementImpl(
                 model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
@@ -86,7 +91,7 @@ public class OntologyManager {
 
         String currentPosition = getSituatedPosition(model);
 
-        if(currentPosition != null) {
+        if (currentPosition != null) {
             model.remove(new StatementImpl(
                     model.getResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
                     model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
@@ -123,64 +128,56 @@ public class OntologyManager {
     }
 
 
+    public void cleanObservations(String locationId, Model model) {
+        List<Statement> matches = model.listStatements(
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+                (RDFNode) null
+        ).toList();
+        if (!matches.isEmpty()) {
+            matches.stream().map(Statement::getObject)
+                    .forEach(s -> ((OntModelImpl) model).getIndividual(s.asResource().getURI()).remove()
+                    );
+            matches.forEach(model::remove);
+        }
+    }
+
     //TODO: deberiamos cambiar el nombre de los recursos en la ontología
     //TODO:para hacer match con el enum
     public void addObservation(String locationId, Observation observation, Integer value, Model model) {
-            Individual observationInd = ((OntModel) model).getIndividual(
-                    ONTOLOGY_NAMESPACE + "#" +
-                            "Location_" + locationId + "-" +
-                            "Content_" + observation);
-            if (observationInd == null) {
-                model.add(new StatementImpl(
-                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                        model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                        model.getResource(ONTOLOGY_NAMESPACE + "#Observation")
-                ));
-                String aux = null;
-                if (!isNotResource(observation)) {
+        Individual observationInd = ((OntModel) model).getIndividual(
+                ONTOLOGY_NAMESPACE + "#" +
+                        "Location_" + locationId + "-" +
+                        "Content_" + observation);
+        if (observationInd == null) {
+            model.add(new StatementImpl(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
+                    model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Observation")
+            ));
+            String aux;
+            aux = "#" + observation.getName();
 
-                    if (observation == Observation.GOLD) aux = "#Gold";
-                    else if (observation == Observation.DIAMOND) aux = "#Diamond";
-                    else aux = "#None"; //OBS = NONE
-
-                    model.add(new StatementImpl(
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                            model.getResource(ONTOLOGY_NAMESPACE + aux)
-                    ));
-                    model.add(new StatementImpl(
-                            model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                            model.getProperty(ONTOLOGY_NAMESPACE + "#value"),
-                            model.createTypedLiteral(value)
-                    ));
-                }
-                else if (observation == Observation.WIND)  aux = "#Wind";
-                else if(observation == Observation.LOCKPICKING) aux = "#Lockpicking";
-                else if(observation == Observation.STENCH) aux = "#Stench";
-                else if(observation == Observation.STRENGH) aux = "#Strength";
-                else if(observation == Observation.LOCKSTATUS) aux = "#LockIsOpen"; //TODO falta este de la ontologia
-
-                model.add(new StatementImpl(
-                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
-                        model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                        model.getResource(ONTOLOGY_NAMESPACE + aux)
-                ));
-
-                model.add(new StatementImpl(
-                        model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId),
-                        model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
-                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation)
-                ));
-            }
+            model.add(new StatementImpl(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
+                    model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                    model.getResource(ONTOLOGY_NAMESPACE + aux)
+            ));
+            model.add(new StatementImpl(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation),
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#value"),
+                    model.createTypedLiteral(observation.getName().equals("None") ? 0 : value)
+            ));
+            model.add(new StatementImpl(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId),
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation)
+            ));
+        }
 
     }
 
-    private Boolean isObservationSupported(Observation obs) {
-        return obs == Observation.GOLD || obs == Observation.DIAMOND || obs == Observation.WIND;
-    }
-    private Boolean isNotResource(Observation obs) {
-        return obs == Observation.LOCKSTATUS || obs == Observation.STRENGH || obs == Observation.STENCH ||
-                obs == Observation.LOCKPICKING || obs == Observation.WIND
-                || obs == Observation.AGENTNAME || obs == Observation.ANY_TREASURE || obs == Observation.NO_TREASURE;
+    private Boolean isResource(Observation obs) {
+        return obs == Observation.GOLD || obs == Observation.DIAMOND || obs == Observation.NO_TREASURE;
     }
 }
