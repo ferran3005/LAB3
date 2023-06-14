@@ -42,6 +42,7 @@ public class BDIAgent extends SingleCapabilityAgent {
     public DFSHandler dfsHandler = new DFSHandler();
 
     public AID situatedAgent;
+    public String agentType;
     public List<Couple<ACLMessage, Direction>> log = new ArrayList<>();
 
     public OntologyManager ontologyManager = new OntologyManager();

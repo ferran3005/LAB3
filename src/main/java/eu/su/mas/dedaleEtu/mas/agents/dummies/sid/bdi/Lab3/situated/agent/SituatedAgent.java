@@ -13,11 +13,15 @@ import java.util.List;
 
 public class SituatedAgent extends AbstractDedaleAgent {
     public AID bdiAgent;
+    public String agentType;
     public States currentState = States.NO_UPDATES_SENT;
     @Override
     protected void setup() {
         super.setup();
         List<Behaviour> lb = new ArrayList<>();
+        final Object[] args = getArguments();
+        agentType = (String) args[2];
+
         lb.add(new RegisterDF());
         lb.add(new FindBDI());
         lb.add(new Listen());

@@ -21,7 +21,7 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
     protected void execute() {
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription templateSd = new ServiceDescription();
-        templateSd.setType("dedale");
+        templateSd.setName("situated-agent06");
         template.addServices(templateSd);
         DFAgentDescription[] results;
         try {
@@ -29,8 +29,10 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
             if (results.length > 0) {
                 DFAgentDescription dfd = results[0];
                 AID provider = dfd.getName();
+                ServiceDescription sd = (ServiceDescription) dfd.getAllServices().next();
                 System.out.println("Found situated! " + provider.getName());
                 ((BDIAgent) this.myAgent).situatedAgent = provider;
+                ((BDIAgent) this.myAgent).agentType = sd.getType();
                 updateOntology(provider.getLocalName());
             }
             // if results.length == 0, no endState is set,

@@ -1,5 +1,6 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.behaviours;
 
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.DFService;
@@ -14,8 +15,8 @@ public class RegisterDF extends OneShotBehaviour {
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(agent.getAID());
         ServiceDescription sd = new ServiceDescription();
-        sd.setName("situated-agent");
-        sd.setType("dedale");
+        sd.setName("situated-agent06");
+        sd.setType(((SituatedAgent) myAgent).agentType);
         dfd.addServices(sd);
         try {
             DFService.register(this.myAgent, dfd);
