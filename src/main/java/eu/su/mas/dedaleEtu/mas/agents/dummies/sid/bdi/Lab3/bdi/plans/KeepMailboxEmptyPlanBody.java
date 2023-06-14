@@ -65,7 +65,10 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
         List<Couple<Location, List<Couple<Observation, Integer>>>> observations =
                 new Gson().fromJson(json, observationsType());
-        //TODO llamar a Ontologymanager para actualizar las hojas
+
+
+        AddEdge(observations, model); //ACTUALIZA HOJAS
+
         String originLocationId = observations.get(0).getLeft().getLocationId();
         ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(
                 situatedAgentName,
@@ -86,6 +89,32 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                         model);
             }
         }
+    }
+
+
+    private void AddEdge(List<Couple<Location, List<Couple<Observation, Integer>>>> observations, Model model){
+
+        int aux = 0;
+        boolean actualWind = false;
+        if(observations.get(0).getRight().size() > 0)
+            actualWind = observations.get(0).getRight().get(0).getLeft() == Observation.WIND;
+        if(actualWind)  ++aux;
+
+        for(Couple<Location, List<Couple<Observation, Integer>>> obs: observations) {
+            if(obs.getRight().size() > 0) {
+                for (Couple<Observation, Integer> observation : obs.getRight()) {
+                    if (observation.getLeft() != Observation.WIND || !actualWind) ++aux;
+                }
+            }
+            else ++aux;
+        }
+
+       if(aux < 3){
+           String originLocationId = observations.get(0).getLeft().getLocationId();
+           ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addEdge(
+                   model,
+                   originLocationId);
+       }
     }
 
     private void handleMovementResponses(ACLMessage message) {
