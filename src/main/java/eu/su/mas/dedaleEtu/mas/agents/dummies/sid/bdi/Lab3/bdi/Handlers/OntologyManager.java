@@ -161,8 +161,7 @@ public class OntologyManager {
 
         if (lastUpdated != null) {
             lastUpdated.changeLiteralObject(Instant.now().toEpochMilli());
-        }
-        else {
+        } else {
             model.add(new StatementImpl(
                     model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
                     model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated"),
@@ -201,8 +200,7 @@ public class OntologyManager {
 
         if (lastUpdated != null) {
             lastUpdated.changeLiteralObject(Instant.now().toEpochMilli());
-        }
-        else {
+        } else {
             model.add(new StatementImpl(
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode),
                     model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated"),
@@ -260,12 +258,33 @@ public class OntologyManager {
     }
 
 
-    public void mergeOntology(Model oldModel, Model newModel){
+    public void mergeOntology(Model oldModel, Model newModel) {
         ((OntModelImpl) newModel).listIndividuals().forEach(
                 ind -> {
                     //add individuals with different URI from new model to old model
-                    if (((OntModelImpl) oldModel).getIndividual(ind.getURI()) == null) {
-                        oldModel.add(ind.listProperties());
+                    if (ind.getURI() != null) {
+                        if (((OntModelImpl) oldModel).getIndividual(ind.getURI()) == null) {
+                            oldModel.add(ind.listProperties());
+                        } else {
+                            Individual oldInd = ((OntModelImpl) oldModel).getIndividual(ind.getURI());
+                            Statement newLastUpdated = ind.getProperty(
+                                    ind.getModel().getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
+                            );
+
+                            Statement oldLastUpdated = oldInd.getProperty(
+                                    oldInd.getModel().getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
+                            );
+
+                            if (newLastUpdated != null) {
+                                Instant newModelLastUpdated = Instant.ofEpochMilli(newLastUpdated.getLiteral().getLong());
+                                if (oldLastUpdated == null ||
+                                        newModelLastUpdated.isAfter(Instant.ofEpochMilli(oldLastUpdated.getLiteral().getLong()))) {
+
+                                    oldModel.remove(oldInd.listProperties());
+                                    oldModel.add(ind.listProperties());
+                                }
+                            }
+                        }
                     }
                 }
         );
