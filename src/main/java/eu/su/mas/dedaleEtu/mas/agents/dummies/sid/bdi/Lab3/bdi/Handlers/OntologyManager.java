@@ -117,7 +117,7 @@ public class OntologyManager {
     public void addEdge(Model model, String locationID) {
         model.add(new StatementImpl(
                 model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationID), //dominio
-                model.getProperty(ONTOLOGY_NAMESPACE + "#IsEdge"),   //nombre propiedad
+                model.getProperty(ONTOLOGY_NAMESPACE + "#isEdge"),   //nombre propiedad
                 model.createTypedLiteral(true))
         );
     }
