@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.QUERY_ADJACENT_CELLS;
@@ -47,7 +49,16 @@ public class OntologyManager {
         return null;
     }
 
-    public Stack<Location> shortestPathToTarget(String target, Model model, String situatedName) {
+    public Boolean goldChecker(String currentPosition, Model model) {
+        //check if Location with location_id currentPosition has gold in model
+        return model.contains(
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + currentPosition),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + currentPosition + "-Content_Gold")
+        );
+    }
+
+    public Stack<Location> shortestPathToTarget(Model model, String situatedName, Function<String, Boolean> checkFunction) {
         Queue<String> queue = new LinkedList<>();
         List<String> visited = new ArrayList<>();
         Map<String, String> pathMap = new HashMap<>();
@@ -59,7 +70,7 @@ public class OntologyManager {
 
         while (!queue.isEmpty()) {
             String position = queue.poll();
-            if (position.equals(target)) { //TODO: modificar para funcion de checkeo
+            if (checkFunction.apply(position)) { //TODO: modificar para funcion de checkeo
                 return buildPath(position, pathMap);
             }
             List<String> adjacentCells = getAdjacentCells(model, position);
@@ -92,13 +103,6 @@ public class OntologyManager {
         return results2.stream()
                 .map(querySolution -> String.valueOf(querySolution.get("adjacentLocationId").asLiteral().getInt()))
                 .collect(java.util.stream.Collectors.toList());
-    }
-
-    public void addExplorer(String situatedAgentName, Model model) {
-        model.add(new StatementImpl(
-                model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
-                model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                model.getResource(ONTOLOGY_NAMESPACE + "#Explorer")));
     }
 
     public void addAgent(String situatedAgentName, String type, Model model) {
@@ -221,8 +225,6 @@ public class OntologyManager {
         }
     }
 
-    //TODO: deberiamos cambiar el nombre de los recursos en la ontología
-    //TODO:para hacer match con el enum
     public void addObservation(String locationId, Observation observation, Integer value, Model model) {
         Individual observationInd = ((OntModel) model).getIndividual(
                 ONTOLOGY_NAMESPACE + "#" +

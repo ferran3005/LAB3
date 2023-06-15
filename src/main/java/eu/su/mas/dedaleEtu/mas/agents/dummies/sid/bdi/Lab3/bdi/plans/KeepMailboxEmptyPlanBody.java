@@ -20,6 +20,7 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovemen
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
 import jade.lang.acl.ACLMessage;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
 
 import java.util.List;
 
@@ -28,10 +29,12 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.MOVEMENT_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.OBSERVATIONS_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.observationsType;
 
 public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO de lo que hay aquí se puede extraer em handlers (i.e. sparql queries, message handling, goals, etc.)
     private ACLMessage message;
+
     @Override
     public void action() {
         setEndState(Plan.EndState.SUCCESSFUL);
@@ -40,13 +43,12 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         if ((agentState.equals(BdiStates.UPDATE_REQUEST_SENT) || agentState.equals(BdiStates.UPDATE_REQUEST_AGREED))
                 && message.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
             handleObservationResponses(message);
-        }
-        else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
+        } else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
                 && message.getProtocol().equals(MOVEMENT_PROTOCOL)) {
             handleMovementResponses(message);
         }
         setEndState(Plan.EndState.SUCCESSFUL);
-        ((BDIAgent)getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
+        ((BDIAgent) getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
     }
 
     @Parameter(direction = Parameter.Direction.IN)
@@ -58,9 +60,10 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
     public int onEnd() {
         return 0;
     }
+
     private void updateOntologyWithObservations(String json) {
 
-        String situatedAgentName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
+        String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
         Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
 
         List<Couple<Location, List<Couple<Observation, Integer>>>> observations =
@@ -70,19 +73,19 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         AddEdge(observations, model); //ACTUALIZA HOJAS
 
         String originLocationId = observations.get(0).getLeft().getLocationId();
-        ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(
+        ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addCurrentPosition(
                 situatedAgentName,
                 originLocationId,
                 model);
 
-        for(Couple<Location, List<Couple<Observation, Integer>>> obs: observations) {
-            ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addAdjacentPosition(
+        for (Couple<Location, List<Couple<Observation, Integer>>> obs : observations) {
+            ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addAdjacentPosition(
                     originLocationId,
                     obs.getLeft().getLocationId(),
                     model); //añadimos la posición adyacente
 
-            for(Couple<Observation, Integer> observation: obs.getRight()) {
-                ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addObservation(
+            for (Couple<Observation, Integer> observation : obs.getRight()) {
+                ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addObservation(
                         obs.getLeft().getLocationId(),
                         observation.getLeft(),
                         (observation.getRight() != null) ? observation.getRight() : 0,
@@ -92,53 +95,49 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
     }
 
 
-    private void AddEdge(List<Couple<Location, List<Couple<Observation, Integer>>>> observations, Model model){
+    private void AddEdge(List<Couple<Location, List<Couple<Observation, Integer>>>> observations, Model model) {
 
         int aux = 0;
         boolean actualWind = false;
-        if(observations.get(0).getRight().size() > 0)
+        if (observations.get(0).getRight().size() > 0)
             actualWind = observations.get(0).getRight().get(0).getLeft() == Observation.WIND;
-        if(actualWind)  ++aux;
+        if (actualWind) ++aux;
 
-        for(Couple<Location, List<Couple<Observation, Integer>>> obs: observations) {
-            if(obs.getRight().size() > 0) {
+        for (Couple<Location, List<Couple<Observation, Integer>>> obs : observations) {
+            if (obs.getRight().size() > 0) {
                 for (Couple<Observation, Integer> observation : obs.getRight()) {
                     if (observation.getLeft() != Observation.WIND || !actualWind) ++aux;
                 }
-            }
-            else ++aux;
+            } else ++aux;
         }
 
-       if(aux < 3){
-           String originLocationId = observations.get(0).getLeft().getLocationId();
-           ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addEdge(
-                   model,
-                   originLocationId);
-       }
+        if (aux < 3) {
+            String originLocationId = observations.get(0).getLeft().getLocationId();
+            ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addEdge(
+                    model,
+                    originLocationId);
+        }
     }
 
     private void handleMovementResponses(ACLMessage message) {
-        if(message.getPerformative() == ACLMessage.AGREE) {
+        if (message.getPerformative() == ACLMessage.AGREE) {
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_REQUEST_AGREED);
             //Todo: reset timeout
-        }
-        else if(message.getPerformative() == ACLMessage.REFUSE) { //todo: si nos rechazan, significa que el agente situado decide descartar la ruta por X motivo (peligro de muerte)
-            ((BDIAgent)getCapability().getMyAgent()).dfsHandler.discardTop();
+        } else if (message.getPerformative() == ACLMessage.REFUSE) { //todo: si nos rechazan, significa que el agente situado decide descartar la ruta por X motivo (peligro de muerte)
+            ((BDIAgent) getCapability().getMyAgent()).dfsHandler.discardTop();
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();
-        }
-        else if(message.getPerformative() == ACLMessage.FAILURE) { //todo: si falla, significa que hay algún agente en medio y hay que hacer retry
+        } else if (message.getPerformative() == ACLMessage.FAILURE) { //todo: si falla, significa que hay algún agente en medio y hay que hacer retry
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
             addRequestMovementGoal();
-        }
-        else if(message.getPerformative() == ACLMessage.INFORM) {
-            String situatedName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
+        } else if (message.getPerformative() == ACLMessage.INFORM) {
+            String situatedName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
             Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
-            String previousLocation = ((BDIAgent)getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model, situatedName);
+            String previousLocation = ((BDIAgent) getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model, situatedName);
             String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
 
-            String situatedAgentName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
-            ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
+            String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
+            ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
             ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();
@@ -146,16 +145,25 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
     }
 
     private void handleObservationResponses(ACLMessage message) {
-        if(message.getPerformative() == ACLMessage.AGREE) {
+        if (message.getPerformative() == ACLMessage.AGREE) {
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATE_REQUEST_AGREED);
             //Todo: reset timeout
-        }
-        else if(message.getPerformative() == ACLMessage.INFORM) {
+        } else if (message.getPerformative() == ACLMessage.INFORM) {
             updateOntologyWithObservations(message.getContent());
-            boolean notEmptyStack = ((BDIAgent)getCapability().getMyAgent()).dfsHandler.updateStack(message.getContent());
-            if(notEmptyStack) {
+            boolean notEmptyStack = ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateStack(message.getContent());
+            if (notEmptyStack) {
                 getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
                 addComputeNextPositionGoal();
+            } else {
+                Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue(); //TODO: borrar esto, es testeo del path searching
+                ((BDIAgent) getCapability().getMyAgent()).ontologyManager
+                        .shortestPathToTarget(model, "Lab",
+                                (current) -> model.contains(
+                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+                                        model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + current + "-Content_Gold")
+                                ));
+                System.out.println("No hay más nodos en el stack");
             }
         }
     }
@@ -167,6 +175,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         Plan requestObservationPlan = requestObservationsPlan(sendUpdateRequestGoalTemplate);
         getCapability().getPlanLibrary().addPlan(requestObservationPlan);
     }
+
     void addComputeNextPositionGoal() {
         Goal computeNextPositionGoal = new ComputeNextPositionGoal(AGENT_STATE + "Compute");
         getCapability().getMyAgent().addGoal(computeNextPositionGoal);
@@ -174,6 +183,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         Plan computeNextMovementPlan = computeNextMovementPlan(computeNextPositionGoalTemplate);
         getCapability().getPlanLibrary().addPlan(computeNextMovementPlan);
     }
+
     void addRequestMovementGoal() {
         Goal sendMovementRequestGoal = new SendMovementRequestGoal(AGENT_STATE + "MoveReq");
         getCapability().getMyAgent().addGoal(sendMovementRequestGoal);
@@ -190,6 +200,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             }
         };
     }
+
     private Plan requestObservationsPlan(GoalTemplate sendUpdateRequestGoalTemplate) {
         return new DefaultPlan(sendUpdateRequestGoalTemplate, RequestObservationsPlanBody.class) {
             @Override
@@ -198,6 +209,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             }
         };
     }
+
     private Plan computeNextMovementPlan(GoalTemplate computeNextMovementGoalTemplate) {
         return new DefaultPlan(computeNextMovementGoalTemplate, ComputeNextPositionPlanBody.class) {
             @Override
@@ -206,6 +218,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             }
         };
     }
+
     private Plan requestMovementPlan(GoalTemplate sendMovementRequestGoalTemplate) {
         return new DefaultPlan(sendMovementRequestGoalTemplate, RequestMovementPlanBody.class) {
             @Override
