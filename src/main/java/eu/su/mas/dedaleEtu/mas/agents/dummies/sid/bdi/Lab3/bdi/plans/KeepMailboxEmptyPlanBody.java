@@ -29,6 +29,7 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.AGENT_STATE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.COMPUTED_POSITION;
@@ -161,16 +162,28 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
                 addComputeNextPositionGoal();
             } else {
-//                Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue(); //TODO: borrar esto, es testeo del path searching y ontology merger
+                Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue(); //TODO: borrar esto, es testeo del path searching y ontology merger
 //                ((BDIAgent) getCapability().getMyAgent()).ontologyManager
 //                        .shortestPathToTarget(model, "Lab",
-//                                (current) -> {
+//                                (current) ->
 //
 //                                        model.contains(
-    //                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
-    //                                        model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
-//                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + current + "-Content_Gold")}
-//                                ));
+//                                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+//                                                model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+//                                                model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + current + "-Content_Gold")
+//                                        ));
+
+
+
+//                OntologyManager.shortestPathToTarget(model, "Lab",
+//                        (current) -> {
+//                            int randomNumber = new Random().nextInt(100);
+//                            return randomNumber < 10;
+//                        }
+//                );
+
+
+
 //
 //                Model model2 = new OntModelImpl(OntModelSpec.OWL_MEM);
 //                model2.add(model.listStatements());
