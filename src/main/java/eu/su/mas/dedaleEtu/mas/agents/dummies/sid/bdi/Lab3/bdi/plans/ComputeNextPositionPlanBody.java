@@ -8,6 +8,7 @@ import bdi4jade.plan.DefaultPlan;
 import bdi4jade.plan.Plan;
 import bdi4jade.plan.Plan.EndState;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
@@ -31,8 +32,8 @@ public class ComputeNextPositionPlanBody extends BeliefGoalPlanBody {
 
         Model model = (Model) getBeliefBase().getBelief(ONTOLOGY).getValue();
         String situatedName = ((BDIAgent) this.myAgent).situatedAgent.getLocalName();
-        String currentPosition = ((BDIAgent) this.myAgent).ontologyManager.getSituatedPosition(model, situatedName);
-        List<String>  adjacentNodes = ((BDIAgent) this.myAgent).ontologyManager.getAdjacentCells(model, currentPosition);
+        String currentPosition = OntologyManager.getSituatedPosition(model, situatedName);
+        List<String>  adjacentNodes = OntologyManager.getAdjacentCells(model, currentPosition);
 
         String nextMove = ((BDIAgent) this.myAgent).dfsHandler.computeNextPosition(adjacentNodes);
         getCapability().getBeliefBase().addOrUpdateBelief(new TransientBelief(COMPUTED_POSITION, nextMove));

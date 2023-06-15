@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
@@ -35,7 +34,7 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 
 public class OntologyManager {
 
-    public String getSituatedPosition(Model model, String situatedName) {
+    public static String getSituatedPosition(Model model, String situatedName) {
 
         Query query = QueryFactory.create(QUERY_SITUATED_AGENT_POSITION(situatedName));
         QueryExecution qe = QueryExecutionFactory.create(query, model);
@@ -49,7 +48,7 @@ public class OntologyManager {
         return null;
     }
 
-    public Boolean goldChecker(String currentPosition, Model model) {
+    public static Boolean goldChecker(String currentPosition, Model model) {
         //check if Location with location_id currentPosition has gold in model
         return model.contains(
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + currentPosition),
@@ -58,7 +57,7 @@ public class OntologyManager {
         );
     }
 
-    public Stack<Location> shortestPathToTarget(Model model, String situatedName, Function<String, Boolean> checkFunction) {
+    public static Stack<Location> shortestPathToTarget(Model model, String situatedName, Function<String, Boolean> checkFunction) {
         Queue<String> queue = new LinkedList<>();
         List<String> visited = new ArrayList<>();
         Map<String, String> pathMap = new HashMap<>();
@@ -85,7 +84,7 @@ public class OntologyManager {
         return new Stack<>();
     }
 
-    private Stack<Location> buildPath(String target, Map<String, String> pathMap) {
+    private static Stack<Location> buildPath(String target, Map<String, String> pathMap) {
         Stack<Location> path = new Stack<>();
         String currentLocation = target;
         while (pathMap.containsKey(currentLocation)) {
@@ -95,7 +94,7 @@ public class OntologyManager {
         return path;
     }
 
-    public List<String> getAdjacentCells(Model model, String currentPosition) {
+    public static List<String> getAdjacentCells(Model model, String currentPosition) {
         Query query = QueryFactory.create(QUERY_ADJACENT_CELLS(currentPosition));
         QueryExecution qe = QueryExecutionFactory.create(query, model);
         List<QuerySolution> results2 = Lists.newArrayList(qe.execSelect());
@@ -105,7 +104,7 @@ public class OntologyManager {
                 .collect(java.util.stream.Collectors.toList());
     }
 
-    public void addAgent(String situatedAgentName, String type, Model model) {
+    public static void addAgent(String situatedAgentName, String type, Model model) {
         model.add(new StatementImpl(
                 model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
                 model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -114,7 +113,7 @@ public class OntologyManager {
         updateAgentLastSeen(situatedAgentName, model);
     }
 
-    public void addEdge(Model model, String locationID) {
+    public static void addEdge(Model model, String locationID) {
         model.add(new StatementImpl(
                 model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationID), //dominio
                 model.getProperty(ONTOLOGY_NAMESPACE + "#isEdge"),   //nombre propiedad
@@ -122,7 +121,7 @@ public class OntologyManager {
         );
     }
 
-    public void addCurrentPosition(String situatedAgentName, String locationId, Model model) {
+    public static void addCurrentPosition(String situatedAgentName, String locationId, Model model) {
 
         model.add(new StatementImpl(
                 model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId),
@@ -153,7 +152,7 @@ public class OntologyManager {
         updateAgentLastSeen(situatedAgentName, model);
     }
 
-    private void updateAgentLastSeen(String situatedAgentName, Model model) {
+    private static void updateAgentLastSeen(String situatedAgentName, Model model) {
         Statement lastUpdated = model.getProperty(
                 model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
                 model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
@@ -169,7 +168,7 @@ public class OntologyManager {
         }
     }
 
-    public void addAdjacentPosition(String originNode, String adjacentNode, Model model) {
+    public static void addAdjacentPosition(String originNode, String adjacentNode, Model model) {
         Individual adjacentInd = ((OntModel) model).getIndividual(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode);
         if (adjacentInd == null) {
             model.add(new StatementImpl(
@@ -192,7 +191,7 @@ public class OntologyManager {
         }
     }
 
-    private void updateLocationLastSeen(String adjacentNode, Model model) {
+    private static void updateLocationLastSeen(String adjacentNode, Model model) {
         Statement lastUpdated = model.getProperty(
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode),
                 model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
@@ -209,7 +208,7 @@ public class OntologyManager {
     }
 
 
-    public void cleanObservations(String locationId, Model model) {
+    public static void cleanObservations(String locationId, Model model) {
         List<Statement> matches = model.listStatements(
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId),
                 model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
@@ -223,7 +222,7 @@ public class OntologyManager {
         }
     }
 
-    public void addObservation(String locationId, Observation observation, Integer value, Model model) {
+    public static void addObservation(String locationId, Observation observation, Integer value, Model model) {
         Individual observationInd = ((OntModel) model).getIndividual(
                 ONTOLOGY_NAMESPACE + "#" +
                         "Location_" + locationId + "-" +
@@ -258,7 +257,7 @@ public class OntologyManager {
     }
 
 
-    public void mergeOntology(Model oldModel, Model newModel) {
+    public static void mergeOntology(Model oldModel, Model newModel) {
         ((OntModelImpl) newModel).listIndividuals().forEach(
                 ind -> {
                     //add individuals with different URI from new model to old model
