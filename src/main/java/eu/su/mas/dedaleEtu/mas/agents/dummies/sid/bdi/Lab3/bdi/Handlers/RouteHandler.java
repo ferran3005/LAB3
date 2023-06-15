@@ -21,10 +21,10 @@ public interface RouteHandler {
 
 
 
-    public boolean updateStack(Model model, String fase);
+    public boolean updateStack(Model model, String fase, String situatedAgentName);
 
 
-    public void updateAfterMovement(String oldLocationId, String newLocationId);
+    public void updateAfterMovement();
 
 
     public void discardTop();
