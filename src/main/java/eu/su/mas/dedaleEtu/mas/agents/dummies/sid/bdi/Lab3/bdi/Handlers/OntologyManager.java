@@ -184,6 +184,25 @@ public class OntologyManager {
                     model.getProperty(ONTOLOGY_NAMESPACE + "#is_adjacent_to"),
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode)
             );
+
+            updateLocationLastSeen(adjacentNode, model);
+        }
+    }
+
+    private void updateLocationLastSeen(String adjacentNode, Model model) {
+        Statement lastUpdated = model.getProperty(
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
+        );
+
+        if (lastUpdated != null) {
+            lastUpdated.changeLiteralObject(Instant.now().toEpochMilli());
+        }
+        else {
+            model.add(new StatementImpl(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode),
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated"),
+                    model.createTypedLiteral(Instant.now().toEpochMilli())));
         }
     }
 
@@ -233,6 +252,7 @@ public class OntologyManager {
                     model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation)
             ));
+            updateLocationLastSeen(locationId, model);
         }
 
     }
