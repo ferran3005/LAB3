@@ -222,6 +222,11 @@ public class OntologyManager {
 
     }
 
+
+    public void mergeOntology(Model oldModel, Model newModel){
+
+    }
+
     private Boolean isResource(Observation obs) {
         return obs == Observation.GOLD || obs == Observation.DIAMOND || obs == Observation.NO_TREASURE;
     }
