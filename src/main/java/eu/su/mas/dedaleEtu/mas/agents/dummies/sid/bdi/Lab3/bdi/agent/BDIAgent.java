@@ -15,6 +15,7 @@ import bdi4jade.reasoning.*;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.DFSHandler;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.RouteHandler;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.FindSituatedPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.KeepMailboxEmptyPlanBody;
@@ -40,12 +41,11 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 
 public class BDIAgent extends SingleCapabilityAgent {
     public DFSHandler dfsHandler = new DFSHandler();
+    public RouteHandler routeHandler = new RouteHandler();
 
     public AID situatedAgent;
     public String agentType;
     public List<Couple<ACLMessage, Direction>> log = new ArrayList<>();
-
-    public OntologyManager ontologyManager = new OntologyManager();
 
     public BDIAgent() {
         // Create initial beliefs

@@ -79,19 +79,19 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         AddEdge(observations, model); //ACTUALIZA HOJAS
 
         String originLocationId = observations.get(0).getLeft().getLocationId();
-        ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addCurrentPosition(
+        OntologyManager.addCurrentPosition(
                 situatedAgentName,
                 originLocationId,
                 model);
 
         for (Couple<Location, List<Couple<Observation, Integer>>> obs : observations) {
-            ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addAdjacentPosition(
+            OntologyManager.addAdjacentPosition(
                     originLocationId,
                     obs.getLeft().getLocationId(),
                     model); //añadimos la posición adyacente
 
             for (Couple<Observation, Integer> observation : obs.getRight()) {
-                ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addObservation(
+                OntologyManager.addObservation(
                         obs.getLeft().getLocationId(),
                         observation.getLeft(),
                         (observation.getRight() != null) ? observation.getRight() : 0,
@@ -119,7 +119,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
         if (aux < 3) {
             String originLocationId = observations.get(0).getLeft().getLocationId();
-            ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addEdge(
+            OntologyManager.addEdge(
                     model,
                     originLocationId);
         }
@@ -139,11 +139,11 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         } else if (message.getPerformative() == ACLMessage.INFORM) {
             String situatedName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
             Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
-            String previousLocation = ((BDIAgent) getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model, situatedName);
+            String previousLocation = OntologyManager.getSituatedPosition(model, situatedName);
             String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
 
             String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
-            ((BDIAgent) getCapability().getMyAgent()).ontologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
+            OntologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
             ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();
@@ -164,10 +164,12 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 //                Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue(); //TODO: borrar esto, es testeo del path searching y ontology merger
 //                ((BDIAgent) getCapability().getMyAgent()).ontologyManager
 //                        .shortestPathToTarget(model, "Lab",
-//                                (current) -> model.contains(
-//                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
-//                                        model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
-//                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + current + "-Content_Gold")
+//                                (current) -> {
+//
+//                                        model.contains(
+    //                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+    //                                        model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+//                                        model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + current + "-Content_Gold")}
 //                                ));
 //
 //                Model model2 = new OntModelImpl(OntModelSpec.OWL_MEM);

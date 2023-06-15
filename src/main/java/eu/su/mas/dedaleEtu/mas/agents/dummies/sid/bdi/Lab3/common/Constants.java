@@ -48,7 +48,8 @@ public class Constants {
     public static Type observationsType() {
         return new TypeToken<List<Couple<gsLocation, List<Couple<Observation, Integer>>>>>() {
         }.getType();
-
     }
+
+
 
 }

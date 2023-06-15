@@ -4,6 +4,7 @@ import bdi4jade.belief.Belief;
 import bdi4jade.core.SingleCapabilityAgent;
 import bdi4jade.plan.Plan;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import jade.core.AID;
 import jade.domain.DFService;
@@ -48,6 +49,6 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
         String type = agent.agentType;
         Belief b = agent.getCapability().getBeliefBase().getBelief(ONTOLOGY);
         Model model = (Model) b.getValue();
-        agent.ontologyManager.addAgent(situatedAgentName, type, model);
+        OntologyManager.addAgent(situatedAgentName, type, model);
     }
 }
