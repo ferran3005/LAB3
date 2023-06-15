@@ -41,7 +41,7 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 
 public class BDIAgent extends SingleCapabilityAgent {
     public DFSHandler dfsHandler = new DFSHandler();
-    public RouteHandler routeHandler = new RouteHandler();
+    public RouteHandler routeHandler;
 
     public AID situatedAgent;
     public String agentType;

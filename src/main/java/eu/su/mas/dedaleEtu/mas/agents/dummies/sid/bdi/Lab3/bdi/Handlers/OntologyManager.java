@@ -121,6 +121,21 @@ public class OntologyManager {
         );
     }
 
+    public static void addVisited(Model model, String locationID) {
+        Statement visited = model.getProperty(
+                model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationID), //dominio
+                model.getProperty(ONTOLOGY_NAMESPACE + "#visited")  //nombre propiedad
+        );
+        if(visited != null) visited.changeLiteralObject(true);
+        else {
+            model.add(new StatementImpl(
+                    model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationID), //dominio
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#visited"),   //nombre propiedad
+                    model.createTypedLiteral(true))
+            );
+        }
+    }
+
     public static void addCurrentPosition(String situatedAgentName, String locationId, Model model) {
 
         model.add(new StatementImpl(
@@ -149,7 +164,9 @@ public class OntologyManager {
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId)
         ));
 
+
         updateAgentLastSeen(situatedAgentName, model);
+        addVisited(model, locationId);
     }
 
     private static void updateAgentLastSeen(String situatedAgentName, Model model) {
@@ -180,6 +197,12 @@ public class OntologyManager {
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode),
                     model.getProperty(ONTOLOGY_NAMESPACE + "#position_id"),
                     model.createTypedLiteral(Integer.valueOf(adjacentNode))));
+
+            model.add(new StatementImpl(
+                            model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode), //dominio
+                            model.getProperty(ONTOLOGY_NAMESPACE + "#visited"),   //nombre propiedad
+                            model.createTypedLiteral(false))
+                    );
 
             model.add(
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + originNode),
