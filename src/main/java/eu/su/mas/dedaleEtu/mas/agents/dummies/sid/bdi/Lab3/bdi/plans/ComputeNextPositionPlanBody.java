@@ -32,10 +32,8 @@ public class ComputeNextPositionPlanBody extends BeliefGoalPlanBody {
 
         Model model = (Model) getBeliefBase().getBelief(ONTOLOGY).getValue();
         String situatedName = ((BDIAgent) this.myAgent).situatedAgent.getLocalName();
-        String currentPosition = OntologyManager.getSituatedPosition(model, situatedName);
-        List<String>  adjacentNodes = OntologyManager.getAdjacentCells(model, currentPosition);
 
-        String nextMove = ((BDIAgent) this.myAgent).dfsHandler.computeNextPosition(adjacentNodes);
+        String nextMove = ((BDIAgent) this.myAgent).routeHandler.computeNextPosition(model);
         getCapability().getBeliefBase().addOrUpdateBelief(new TransientBelief(COMPUTED_POSITION, nextMove));
         getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
         addRequestMovementGoal();

@@ -19,15 +19,7 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNext
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
 import jade.lang.acl.ACLMessage;
-import org.apache.jena.ontology.Individual;
-import org.apache.jena.ontology.OntModel;
-import org.apache.jena.ontology.OntModelSpec;
-import org.apache.jena.ontology.impl.OntModelImpl;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.impl.StatementImpl;
-
-import java.time.Instant;
 import java.util.List;
 import java.util.Random;
 
@@ -36,7 +28,6 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.MOVEMENT_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.OBSERVATIONS_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
-import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.observationsType;
 
 public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO de lo que hay aquí se puede extraer em handlers (i.e. sparql queries, message handling, goals, etc.)
@@ -131,28 +122,26 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_REQUEST_AGREED);
             //Todo: reset timeout
         } else if (message.getPerformative() == ACLMessage.REFUSE) { //todo: si nos rechazan, significa que el agente situado decide descartar la ruta por X motivo (peligro de muerte)
-            ((BDIAgent) getCapability().getMyAgent()).dfsHandler.discardTop();
+            ((BDIAgent) getCapability().getMyAgent()).routeHandler.discardTop(); //TODO: creo que esto ya no nos vale
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();
         } else if (message.getPerformative() == ACLMessage.FAILURE) { //todo: si falla, significa que hay algún agente en medio y hay que hacer retry
-            if(true){ //TODO 50% SI FALLA
+            int randomNumber = new Random().nextInt(100);
+            if (randomNumber < 50) { //TODO 50% SI FALLA
                 getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
                 addRequestMovementGoal();
-            }
-            else{
+            } else {
                 getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
                 //COMPUTE RANDOM
             }
 
         } else if (message.getPerformative() == ACLMessage.INFORM) {
-            String situatedName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
             Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
-            String previousLocation = OntologyManager.getSituatedPosition(model, situatedName);
             String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
 
             String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
             OntologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
-            ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
+            ((BDIAgent) getCapability().getMyAgent()).routeHandler.updateAfterMovement();
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();
         }
@@ -164,91 +153,10 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             //Todo: reset timeout
         } else if (message.getPerformative() == ACLMessage.INFORM) {
             updateOntologyWithObservations(message.getContent());
-            boolean notEmptyStack = ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateStack(message.getContent());
-            if (notEmptyStack) {
-                getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
-                addComputeNextPositionGoal();
-            } else {
-                Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue(); //TODO: borrar esto, es testeo del path searching y ontology merger
-//                ((BDIAgent) getCapability().getMyAgent()).ontologyManager
-//                        .shortestPathToTarget(model, "Lab",
-//                                (current) ->
-//
-//                                        model.contains(
-//                                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
-//                                                model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
-//                                                model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + current + "-Content_Gold")
-//                                        ));
-
-
-
-//                OntologyManager.shortestPathToTarget(model, "Lab",
-//                        (current) -> {
-//                            int randomNumber = new Random().nextInt(100);
-//                            return randomNumber < 10;
-//                        }
-//                );
-
-
-
-//
-//                Model model2 = new OntModelImpl(OntModelSpec.OWL_MEM);
-//                model2.add(model.listStatements());
-//                model2.add(new StatementImpl(
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-" + 999),
-//                        model2.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Node")));
-//
-//                model2.add(new StatementImpl(
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-" + 999),
-//                        model2.getProperty(ONTOLOGY_NAMESPACE + "#position_id"),
-//                        model2.createTypedLiteral(Integer.valueOf(999))));
-//
-//                model2.add(new StatementImpl(
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-" + 999),
-//                        model2.getProperty(ONTOLOGY_NAMESPACE + "#is_adjacent_to"),
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-" + 998)
-//                ));
-//
-//                model2.add(new StatementImpl(
-//                        model2.createResource(ONTOLOGY_NAMESPACE + "#Location-" + 998),
-//                        model2.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Node")));
-//
-//                model2.add(new StatementImpl(
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-" + 998),
-//                        model2.getProperty(ONTOLOGY_NAMESPACE + "#position_id"),
-//                        model2.createTypedLiteral(Integer.valueOf(998))));
-//
-//                model2.remove(new StatementImpl(
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-" + 96),
-//                        model2.getProperty(ONTOLOGY_NAMESPACE + "hasObservation"),
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "Location_96-Content_Gold")
-//                ));
-//                model2.getProperty(
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-96"),
-//                        model2.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
-//                ).changeLiteralObject(Instant.now().toEpochMilli());
-//                Individual ind999 = ((OntModel) model2).createIndividual(
-//                        ONTOLOGY_NAMESPACE + "#Location-" + "999",
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location"));
-//                Individual ind998 = ((OntModel) model2).createIndividual(
-//                        ONTOLOGY_NAMESPACE + "#Location-" + "998",
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location"));
-//
-//                ind999.addProperty(
-//                        model2.getProperty(ONTOLOGY_NAMESPACE + "#is_adjacent_to"),
-//                        ind998);
-//
-//                ind998.addProperty(
-//                        model2.getProperty(ONTOLOGY_NAMESPACE + "#is_adjacent_to"),
-//                        model2.getResource(ONTOLOGY_NAMESPACE + "#Location-" + "94")
-//                );
-//                ((BDIAgent) getCapability().getMyAgent()).ontologyManager.mergeOntology(model, model2);
-                System.out.println("No hay más nodos en el stack");
-            }
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
+            addComputeNextPositionGoal();
         }
-    }
+}
 
     void addRequestUpdateGoal() {
         Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE + "UpdateReq");
