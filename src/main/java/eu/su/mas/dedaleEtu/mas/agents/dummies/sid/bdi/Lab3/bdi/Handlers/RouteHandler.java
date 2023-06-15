@@ -31,6 +31,6 @@ public interface RouteHandler {
 
 
 
-    public String computeNextPosition(Model model);
+    public String computeNextPosition(Model model, String situatedAgentName);
 
 }
