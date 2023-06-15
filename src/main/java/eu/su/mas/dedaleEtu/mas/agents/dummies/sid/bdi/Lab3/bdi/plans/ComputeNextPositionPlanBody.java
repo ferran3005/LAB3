@@ -20,7 +20,6 @@ import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
 
-import java.util.List;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.AGENT_STATE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.COMPUTED_POSITION;
@@ -33,7 +32,7 @@ public class ComputeNextPositionPlanBody extends BeliefGoalPlanBody {
         Model model = (Model) getBeliefBase().getBelief(ONTOLOGY).getValue();
         String situatedName = ((BDIAgent) this.myAgent).situatedAgent.getLocalName();
 
-        String nextMove = ((BDIAgent) this.myAgent).routeHandler.computeNextPosition(model);
+        String nextMove = ((BDIAgent) this.myAgent).routeHandler.computeNextPosition(model, situatedName);
         getCapability().getBeliefBase().addOrUpdateBelief(new TransientBelief(COMPUTED_POSITION, nextMove));
         getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
         addRequestMovementGoal();

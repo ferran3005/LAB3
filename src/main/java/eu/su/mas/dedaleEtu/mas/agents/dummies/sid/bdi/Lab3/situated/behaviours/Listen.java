@@ -24,6 +24,9 @@ public class Listen extends Behaviour {
                     this.myAgent.addBehaviour(new CanIMove(msg.createReply(), msg.getContent()));
                 }
             }
+            else {
+                //TODO: mirar si el protocolo es ONTOLOGY_06
+            }
         } else {
             block();
         }

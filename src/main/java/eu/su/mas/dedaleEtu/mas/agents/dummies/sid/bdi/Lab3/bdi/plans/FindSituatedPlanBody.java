@@ -4,6 +4,8 @@ import bdi4jade.belief.Belief;
 import bdi4jade.core.SingleCapabilityAgent;
 import bdi4jade.plan.Plan;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.CollectorRouteHandler;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.ExplorerRouteHandler;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import jade.core.AID;
@@ -33,7 +35,14 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
                 ServiceDescription sd = (ServiceDescription) dfd.getAllServices().next();
                 System.out.println("Found situated! " + provider.getName());
                 ((BDIAgent) this.myAgent).situatedAgent = provider;
-                ((BDIAgent) this.myAgent).agentType = sd.getType();
+                String type = sd.getType();
+                ((BDIAgent) this.myAgent).agentType = type;
+                if(type.equals("explorer")) {
+                    ((BDIAgent) this.myAgent).routeHandler = new ExplorerRouteHandler();
+                }
+                else if(type.equals("collector")) {
+                    ((BDIAgent) this.myAgent).routeHandler = new CollectorRouteHandler();
+                }
                 updateOntology(provider.getLocalName());
             }
             // if results.length == 0, no endState is set,

@@ -4,6 +4,7 @@ import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import org.apache.jena.ontology.impl.OntModelImpl;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
 
 import java.time.Instant;
@@ -22,11 +23,9 @@ public class ExplorerRouteHandler implements RouteHandler{
 
     public boolean updateStack(Model model, String fase, String situatedAgentName) {
         if(fase.equals("fase1")) {
-            route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> {
-                        return !model.getProperty(
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
-                                model.getProperty(ONTOLOGY_NAMESPACE + "#visited")).getBoolean();
-                    }
+            route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> !model.getProperty(
+                    model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#visited")).getBoolean()
             );
         }
         else{ //fase 2
@@ -89,8 +88,9 @@ public class ExplorerRouteHandler implements RouteHandler{
         ((OntModelImpl) model).listIndividuals().forEach(
                 ind -> {
                     if (ind.getURI() != null) {
-                        if(!model.getProperty(model.getResource(ind.getURI()),
-                                model.getProperty(ONTOLOGY_NAMESPACE + "#visited")).getBoolean()) allExplored = false;
+                        Statement visited = model.getProperty(model.getResource(ind.getURI()),
+                                model.getProperty(ONTOLOGY_NAMESPACE + "#visited"));
+                        if(visited != null && !visited.getBoolean()) allExplored = false;
                     }
                 }
         );

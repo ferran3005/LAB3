@@ -35,22 +35,24 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
     @Override
     public void action() {
-        setEndState(Plan.EndState.SUCCESSFUL);
-        BeliefBase beliefBase = getCapability().getBeliefBase();
-        BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
-        if ((agentState.equals(BdiStates.UPDATE_REQUEST_SENT) || agentState.equals(BdiStates.UPDATE_REQUEST_AGREED))
-                && message.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
-            handleObservationResponses(message);
-        } else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
-                && message.getProtocol().equals(MOVEMENT_PROTOCOL)) {
-            handleMovementResponses(message);
+        if(message.getSender().getName().equals(((BDIAgent) getCapability().getMyAgent()).situatedAgent.getName())) {
+            setEndState(Plan.EndState.SUCCESSFUL);
+            BeliefBase beliefBase = getCapability().getBeliefBase();
+            BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
+            if ((agentState.equals(BdiStates.UPDATE_REQUEST_SENT) || agentState.equals(BdiStates.UPDATE_REQUEST_AGREED))
+                    && message.getProtocol().equals(OBSERVATIONS_PROTOCOL)) {
+                handleObservationResponses(message);
+            } else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
+                    && message.getProtocol().equals(MOVEMENT_PROTOCOL)) {
+                handleMovementResponses(message);
+            }
+            setEndState(Plan.EndState.SUCCESSFUL);
+            ((BDIAgent) getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
         }
-        setEndState(Plan.EndState.SUCCESSFUL);
-        ((BDIAgent) getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
     }
 
     @Parameter(direction = Parameter.Direction.IN)
-    public void setMessage(ACLMessage msgReceived) throws InterruptedException {
+    public void setMessage(ACLMessage msgReceived) {
         message = msgReceived;
     }
 
@@ -76,13 +78,18 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 originLocationId,
                 model);
 
+        Boolean actualWind = observations.get(0).getRight().stream().anyMatch(o -> o.getLeft() == Observation.WIND);
         for (Couple<Location, List<Couple<Observation, Integer>>> obs : observations) {
-            OntologyManager.addAdjacentPosition(
-                    originLocationId,
-                    obs.getLeft().getLocationId(),
-                    model); //añadimos la posición adyacente
-
+            Boolean nextWind = obs.getRight().stream().anyMatch(o -> o.getLeft() == Observation.WIND);
+            if(!actualWind  || !nextWind) {
+                OntologyManager.addAdjacentPosition(
+                        originLocationId,
+                        obs.getLeft().getLocationId(),
+                        model); //añadimos la posición adyacente
+            }
             for (Couple<Observation, Integer> observation : obs.getRight()) {
+
+
                 OntologyManager.addObservation(
                         obs.getLeft().getLocationId(),
                         observation.getLeft(),
@@ -98,7 +105,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         int aux = 0;
         boolean actualWind = false;
         if (observations.get(0).getRight().size() > 0)
-            actualWind = observations.get(0).getRight().get(0).getLeft() == Observation.WIND;
+            actualWind = observations.get(0).getRight().stream().anyMatch(o -> o.getLeft() == Observation.WIND);
         if (actualWind) ++aux;
 
         for (Couple<Location, List<Couple<Observation, Integer>>> obs : observations) {
@@ -150,7 +157,6 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
     private void handleObservationResponses(ACLMessage message) {
         if (message.getPerformative() == ACLMessage.AGREE) {
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATE_REQUEST_AGREED);
-            //Todo: reset timeout
         } else if (message.getPerformative() == ACLMessage.INFORM) {
             updateOntologyWithObservations(message.getContent());
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);

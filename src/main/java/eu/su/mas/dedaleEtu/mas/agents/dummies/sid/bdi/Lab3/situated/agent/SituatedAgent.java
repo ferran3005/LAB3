@@ -18,6 +18,7 @@ public class SituatedAgent extends AbstractDedaleAgent {
     @Override
     protected void setup() {
         super.setup();
+        
         List<Behaviour> lb = new ArrayList<>();
         final Object[] args = getArguments();
         agentType = (String) args[2];

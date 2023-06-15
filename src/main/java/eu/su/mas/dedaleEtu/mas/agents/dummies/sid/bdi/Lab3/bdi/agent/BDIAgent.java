@@ -57,6 +57,8 @@ public class BDIAgent extends SingleCapabilityAgent {
         Goal findSituatedGoal = new SPARQLGoal(ONTOLOGY, QUERY_SITUATED_AGENT);
         Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE);
 
+
+
         SequentialGoal orderedGoals = new SequentialGoal(Arrays.asList(registerGoal, findSituatedGoal, sendUpdateRequestGoal));
         addGoal(orderedGoals);
 
