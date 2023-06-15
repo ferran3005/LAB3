@@ -135,8 +135,15 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();
         } else if (message.getPerformative() == ACLMessage.FAILURE) { //todo: si falla, significa que hay algún agente en medio y hay que hacer retry
-            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
-            addRequestMovementGoal();
+            if(true){ //TODO 50% SI FALLA
+                getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
+                addRequestMovementGoal();
+            }
+            else{
+                getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
+                //COMPUTE RANDOM
+            }
+
         } else if (message.getPerformative() == ACLMessage.INFORM) {
             String situatedName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
             Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
