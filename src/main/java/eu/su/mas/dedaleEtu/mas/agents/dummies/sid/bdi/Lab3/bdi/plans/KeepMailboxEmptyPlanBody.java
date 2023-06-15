@@ -137,10 +137,8 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             String previousLocation = ((BDIAgent)getCapability().getMyAgent()).ontologyManager.getSituatedPosition(model, situatedName);
             String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
 
-            // public void addCurrentPosition(String situatedAgentName, String locationId, Model model)
             String situatedAgentName = ((BDIAgent)getCapability().getMyAgent()).situatedAgent.getLocalName();
             ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
-           // ((BDIAgent)getCapability().getMyAgent()).ontologyManager.addCurrentPosition(situatedAgentName, originLocationId, model);
             ((BDIAgent) getCapability().getMyAgent()).dfsHandler.updateAfterMovement(previousLocation, currentPosition);
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
             addRequestUpdateGoal();

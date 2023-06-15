@@ -44,9 +44,10 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
     }
 
     private void updateOntology(String situatedAgentName) {
-        SingleCapabilityAgent agent = (SingleCapabilityAgent) this.myAgent;
+        BDIAgent agent = (BDIAgent) this.myAgent;
+        String type = agent.agentType;
         Belief b = agent.getCapability().getBeliefBase().getBelief(ONTOLOGY);
         Model model = (Model) b.getValue();
-        ((BDIAgent) this.myAgent).ontologyManager.addExplorer(situatedAgentName, model);
+        agent.ontologyManager.addAgent(situatedAgentName, type, model);
     }
 }

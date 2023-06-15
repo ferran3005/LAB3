@@ -107,11 +107,7 @@ public class OntologyManager {
                 model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
                 model.getResource(ONTOLOGY_NAMESPACE + "#" + type)));
 
-        model.getProperty(
-                model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
-                model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
-        ).changeLiteralObject(Instant.now().toEpochMilli());
-        //((OntModelImpl)model).listIndividuals().toList();
+        updateAgentLastSeen(situatedAgentName, model);
     }
 
     public void addEdge(Model model, String locationID) {
@@ -149,6 +145,25 @@ public class OntologyManager {
                 model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId)
         ));
+
+        updateAgentLastSeen(situatedAgentName, model);
+    }
+
+    private void updateAgentLastSeen(String situatedAgentName, Model model) {
+        Statement lastUpdated = model.getProperty(
+                model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated")
+        );
+
+        if (lastUpdated != null) {
+            lastUpdated.changeLiteralObject(Instant.now().toEpochMilli());
+        }
+        else {
+            model.add(new StatementImpl(
+                    model.createResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated"),
+                    model.createTypedLiteral(Instant.now().toEpochMilli())));
+        }
     }
 
     public void addAdjacentPosition(String originNode, String adjacentNode, Model model) {
@@ -225,9 +240,5 @@ public class OntologyManager {
 
     public void mergeOntology(Model oldModel, Model newModel){
 
-    }
-
-    private Boolean isResource(Observation obs) {
-        return obs == Observation.GOLD || obs == Observation.DIAMOND || obs == Observation.NO_TREASURE;
     }
 }
