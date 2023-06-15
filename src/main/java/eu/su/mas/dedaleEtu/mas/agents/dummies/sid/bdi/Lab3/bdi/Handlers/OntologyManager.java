@@ -239,6 +239,13 @@ public class OntologyManager {
 
 
     public void mergeOntology(Model oldModel, Model newModel){
-
+        ((OntModelImpl) newModel).listIndividuals().forEach(
+                ind -> {
+                    //add individuals with different URI from new model to old model
+                    if (((OntModelImpl) oldModel).getIndividual(ind.getURI()) == null) {
+                        oldModel.add(ind.listProperties());
+                    }
+                }
+        );
     }
 }
