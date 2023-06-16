@@ -33,6 +33,7 @@ public interface RouteHandler {
 
 
 
-    public String computeNextPosition(Model model, AID situatedAgentName);
+    public String computeNextPosition(Model model, AID situatedAgentName, int gold, int diamond);
 
+    public void isMapExplored(Model model);
 }

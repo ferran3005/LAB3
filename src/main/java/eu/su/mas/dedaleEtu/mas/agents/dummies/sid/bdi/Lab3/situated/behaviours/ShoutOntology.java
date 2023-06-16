@@ -35,4 +35,5 @@ public class ShoutOntology extends OneShotBehaviour {
         msg.setContent(modelJson);
         myAgent.send(msg);
     }
+
 }

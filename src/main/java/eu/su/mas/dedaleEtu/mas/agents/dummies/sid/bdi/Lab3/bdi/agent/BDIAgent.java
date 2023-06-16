@@ -48,6 +48,8 @@ public class BDIAgent extends SingleCapabilityAgent {
     public int strength;
     public int backPackCapacityDiamond;
     public int backPackCapacityGold;
+    public int maxCapGold;
+    public int maxCapDiam;
     public Observation treasureType;
     public String agentType;
     public List<Couple<ACLMessage, Direction>> log = new ArrayList<>();

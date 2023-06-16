@@ -30,7 +30,9 @@ public class MoveToPosition extends  OneShotBehaviour{
     public void action() {
 
         if(((AbstractDedaleAgent) this.myAgent).moveTo(new gsLocation(msg.getContent()))){
-            if( ((SituatedAgent) this.myAgent).agentType == "collector") tryToCollect();
+            if( ((SituatedAgent) this.myAgent).agentType == "collector") {
+                tryToCollect();
+            }
             successMove();
         }
         else failMove();
@@ -59,6 +61,7 @@ public class MoveToPosition extends  OneShotBehaviour{
         boolean unlock = ((AbstractDedaleAgent) this.myAgent).openLock(((AbstractDedaleAgent) this.myAgent).getMyTreasureType());
         if(unlock) ((AbstractDedaleAgent) this.myAgent).pick();
     }
+
     public void failMove(){
         msg.setPerformative(ACLMessage.FAILURE);
         msg.setProtocol(MOVEMENT_PROTOCOL);

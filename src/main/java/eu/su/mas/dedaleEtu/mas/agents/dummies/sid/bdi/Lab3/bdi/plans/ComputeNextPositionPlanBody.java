@@ -32,7 +32,9 @@ public class ComputeNextPositionPlanBody extends BeliefGoalPlanBody {
         Model model = (Model) getBeliefBase().getBelief(ONTOLOGY).getValue();
         String situatedName = ((BDIAgent) this.myAgent).situatedAgent.getLocalName();
 
-        String nextMove = ((BDIAgent) this.myAgent).routeHandler.computeNextPosition(model, ((BDIAgent) this.myAgent).situatedAgent);
+        int gold = ((BDIAgent) this.myAgent).backPackCapacityGold;
+        int diamond = ((BDIAgent) this.myAgent).backPackCapacityDiamond;
+        String nextMove = ((BDIAgent) this.myAgent).routeHandler.computeNextPosition(model, ((BDIAgent) this.myAgent).situatedAgent, gold, diamond);
         getCapability().getBeliefBase().addOrUpdateBelief(new TransientBelief(COMPUTED_POSITION, nextMove));
         getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
         addRequestMovementGoal();

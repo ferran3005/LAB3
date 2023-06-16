@@ -18,52 +18,19 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 
 public class ExplorerRouteHandler implements RouteHandler{
     public Stack<Location> route;
-    private boolean allExplored;
+    public boolean allExplored;
     public ExplorerRouteHandler() {
         route = new Stack<>();
         allExplored = false;
     }
 
     public boolean updateStack(Model model, String fase, String situatedAgentName) {
-        if(fase.equals("fase1")) {
-            route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> !model.getProperty(
-                    model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
-                    model.getProperty(ONTOLOGY_NAMESPACE + "#visited")).getBoolean()
-            );
-        }
-        else{ //fase 2
-            // TODO fase 2
 
-            List<Individual> indivs = ((OntModelImpl) model).listIndividuals().toList();
-            Long maxLastUpdated = Instant.now().toEpochMilli();
-            int positinId = 0;
+        if(fase.equals("fase1"))
+            fase1(model, situatedAgentName);
+        else //Fase 2
+            fase2(model, situatedAgentName);
 
-            Property lastUpdated = model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated");
-            Property locationId = model.getProperty(ONTOLOGY_NAMESPACE + "#position_id");
-            for(Individual ind : indivs){
-                Statement aux = ind.getProperty(lastUpdated);
-                if(aux != null && ind.hasOntClass(ONTOLOGY_NAMESPACE + "#Node"))
-                    if(aux.getLong() < maxLastUpdated){
-                        maxLastUpdated = aux.getLong();
-                        try {
-                            positinId = ind.getProperty(locationId).getInt();
-                        }
-                        catch (Exception e){
-                            System.out.print(e);
-                        }
-
-                    }
-            }
-
-            int find = positinId;
-            route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> {
-
-                            return (find == model.getProperty(
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
-                                model.getProperty(ONTOLOGY_NAMESPACE + "#position_id")).getInt());
-                    }
-            );
-        }
         return !route.isEmpty();
     }
 
@@ -75,7 +42,7 @@ public class ExplorerRouteHandler implements RouteHandler{
         route.pop();
     }
 
-    public String computeNextPosition(Model model, AID situatedAgent) {
+    public String computeNextPosition(Model model, AID situatedAgent, int gold, int diamond) {
 
         if(!allExplored)isMapExplored(model);
         if(route.isEmpty()){
@@ -86,7 +53,7 @@ public class ExplorerRouteHandler implements RouteHandler{
         return route.peek().getLocationId();
     }
 
-    private void isMapExplored(Model model){
+    public void isMapExplored(Model model){
         allExplored = true; //Empezamos de esta premisa, y si hay algun nodo no visitado se pone a false
 
         ((OntModelImpl) model).listIndividuals().forEach(
@@ -100,6 +67,43 @@ public class ExplorerRouteHandler implements RouteHandler{
         );
     }
 
+    private void fase1(Model model, String situatedAgentName){
+        route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> !model.getProperty(
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#visited")).getBoolean()
+        );
+    }
+
+    private void fase2(Model model, String situatedAgentName){
+        List<Individual> indivs = ((OntModelImpl) model).listIndividuals().toList();
+        Long maxLastUpdated = Instant.now().toEpochMilli();
+        int positinId = 0;
+
+        Property lastUpdated = model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated");
+        Property locationId = model.getProperty(ONTOLOGY_NAMESPACE + "#position_id");
+        for(Individual ind : indivs){
+            Statement aux = ind.getProperty(lastUpdated);
+            if(aux != null && ind.hasOntClass(ONTOLOGY_NAMESPACE + "#Node"))
+                if(aux.getLong() < maxLastUpdated){
+                    maxLastUpdated = aux.getLong();
+                    try {
+                        positinId = ind.getProperty(locationId).getInt();
+                    }
+                    catch (Exception e){
+                        System.out.print(e);
+                    }
+
+                }
+        }
+        int find = positinId;
+        route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> {
+
+                    return (find == model.getProperty(
+                            model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+                            model.getProperty(ONTOLOGY_NAMESPACE + "#position_id")).getInt());
+                }
+        );
+    }
 
 
 }
