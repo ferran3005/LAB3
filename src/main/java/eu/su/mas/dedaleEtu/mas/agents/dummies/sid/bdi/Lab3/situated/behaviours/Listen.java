@@ -1,6 +1,7 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.behaviours;
 
 import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.EntityType;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
@@ -41,12 +42,16 @@ public class Listen extends Behaviour {
                 }
             }
             else {
-                if(msg.getProtocol().equals(SHOUT_ONTOLOGY_PROTOCOL_OUT)) {
-                    if(((SituatedAgent) this.myAgent).agentType == "collector")
-                        tryToLeave(msg.getSender().getLocalName());
-                    this.myAgent.addBehaviour(new SendInNewOntology(msg));
+                if (((SituatedAgent) this.myAgent).data.getAgentType().equals(EntityType.AGENT_COLLECTOR.getName())) {
+                    tryToLeave(msg.getSender().getLocalName());
                 }
-                //TODO: mirar si el protocolo es ONTOLOGY_06
+                if(((SituatedAgent)myAgent).listenToOntology) {
+                    if (msg.getProtocol().equals(SHOUT_ONTOLOGY_PROTOCOL_OUT)) {
+                        this.myAgent.addBehaviour(new SendInNewOntology(msg));
+                        ((SituatedAgent)myAgent).listenToOntology = false;
+                        myAgent.addBehaviour(new WaitBeforeListeningForOntologies(Instant.now().toEpochMilli()));
+                    }
+                }
             }
         } else {
             block();

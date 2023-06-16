@@ -70,9 +70,11 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
     }
 
     private void mergeOntologies(String content) {
+        Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
         Model model2 =  new OntModelImpl(OntModelSpec.OWL_MEM);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(content.getBytes());
         RDFDataMgr.read(model2, inputStream, RDFFormat.JSONLD_COMPACT_PRETTY.getLang());
+        OntologyManager.mergeOntology(model, model2);
     }
 
 

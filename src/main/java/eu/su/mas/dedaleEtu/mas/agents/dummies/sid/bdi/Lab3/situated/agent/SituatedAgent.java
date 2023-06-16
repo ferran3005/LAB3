@@ -19,6 +19,7 @@ import java.util.List;
 
 public class SituatedAgent extends AbstractDedaleAgent {
     public AID bdiAgent;
+    public Boolean listenToOntology = true;
     public String agentType;
     public States currentState = States.NO_UPDATES_SENT;
     public SituatedData data;
