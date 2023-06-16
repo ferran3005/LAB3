@@ -18,8 +18,16 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNextPositionGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ShoutOntologyGoal;
 import jade.lang.acl.ACLMessage;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.impl.OntModelImpl;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
+
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Random;
 
@@ -28,6 +36,8 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.MOVEMENT_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.OBSERVATIONS_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.SHOUT_ONTOLOGY_PROTOCOL_IN;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.SHOUT_ONTOLOGY_PROTOCOL_OUT;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.observationsType;
 
 public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO de lo que hay aquí se puede extraer em handlers (i.e. sparql queries, message handling, goals, etc.)
@@ -45,11 +55,23 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             } else if ((agentState.equals(BdiStates.MOVEMENT_REQUEST_SENT) || agentState.equals(BdiStates.MOVEMENT_REQUEST_AGREED))
                     && message.getProtocol().equals(MOVEMENT_PROTOCOL)) {
                 handleMovementResponses(message);
+            }else if ((agentState.equals(BdiStates.SHOUT_ONTOLOGY_REQUEST_SENT) || agentState.equals(BdiStates.SHOUT_ONTOLOGY_REQUEST_AGREED))
+                    && message.getProtocol().equals(SHOUT_ONTOLOGY_PROTOCOL_OUT)) {
+                handleShoutOntologyResponses(message);
+            } else if(message.getProtocol().equals(SHOUT_ONTOLOGY_PROTOCOL_IN)) {
+                mergeOntologies(message.getContent());
             }
             setEndState(Plan.EndState.SUCCESSFUL);
             ((BDIAgent) getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
         }
     }
+
+    private void mergeOntologies(String content) {
+        Model model2 =  new OntModelImpl(OntModelSpec.OWL_MEM);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(content.getBytes());
+        RDFDataMgr.read(model2, inputStream, RDFFormat.JSONLD_COMPACT_PRETTY.getLang());
+    }
+
 
     @Parameter(direction = Parameter.Direction.IN)
     public void setMessage(ACLMessage msgReceived) {
@@ -124,6 +146,15 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         }
     }
 
+    private void handleShoutOntologyResponses(ACLMessage message) {
+        if (message.getPerformative() == ACLMessage.AGREE) {
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.SHOUT_ONTOLOGY_REQUEST_AGREED);
+        } else if (message.getPerformative() == ACLMessage.INFORM) {
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
+            addRequestUpdateGoal();
+        }
+    }
+
     private void handleMovementResponses(ACLMessage message) {
         if (message.getPerformative() == ACLMessage.AGREE) {
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_REQUEST_AGREED);
@@ -149,8 +180,10 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
             OntologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
             ((BDIAgent) getCapability().getMyAgent()).routeHandler.updateAfterMovement();
-            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.INITIAL);
-            addRequestUpdateGoal();
+
+
+            getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_END);
+            addRequestShoutOntologyGoal();
         }
     }
 
@@ -162,7 +195,15 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
             addComputeNextPositionGoal();
         }
-}
+    }
+
+    void addRequestShoutOntologyGoal() {
+        Goal sendShoutOntologyRequestGoal = new ShoutOntologyGoal(AGENT_STATE + "ShoutOntologyReq");
+        getCapability().getMyAgent().addGoal(sendShoutOntologyRequestGoal);
+        GoalTemplate sendShoutOntologyRequestGoalTemplate = matchesGoal(sendShoutOntologyRequestGoal);
+        Plan shoutOntologyPlan = shoutOntologyPlan(sendShoutOntologyRequestGoalTemplate);
+        getCapability().getPlanLibrary().addPlan(shoutOntologyPlan);
+    }
 
     void addRequestUpdateGoal() {
         Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE + "UpdateReq");
@@ -202,6 +243,15 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             @Override
             public boolean isContextApplicable(Goal goal) {
                 return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.INITIAL);
+            }
+        };
+    }
+
+    private Plan shoutOntologyPlan(GoalTemplate sendShoutOntologyRequestGoalTemplate) {
+        return new DefaultPlan(sendShoutOntologyRequestGoalTemplate, ShoutOntologyPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.MOVEMENT_END);
             }
         };
     }

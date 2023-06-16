@@ -37,6 +37,10 @@
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
+		<repository>
+			<id>central</id>
+			<url>https://repo.maven.apache.org/maven2</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -109,6 +113,13 @@
 			<artifactId>jena-arq</artifactId>
 			<version>4.7.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.github.jsonld-java</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>0.13.4</version>
+		</dependency>
+
 
 
 		<!-- GraphStream -->

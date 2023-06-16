@@ -4,18 +4,20 @@ import com.google.gson.reflect.TypeToken;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.gs.gsLocation;
+import org.apache.jena.rdf.model.Statement;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
 public class Constants {
     public static String I_AM_REGISTERED = "IAmRegistered";
-    public static String ALL_MAP_EXPLORED = "AllMapExplored";
-    public static String IS_INFO_UPDATED = "IsInfoUpdated";
-    public static String OBSERVATIONS_PROTOCOL = "OBSERVATIONS";
-    //public static String MOVEMENT_PROTOCOL = "MOVEMENT";
-    public static String MOVEMENT_PROTOCOL = "MOVEMENT";
+    public static String OBSERVATIONS_PROTOCOL = "OBSERVATIONS06";
+    public static String MOVEMENT_PROTOCOL = "MOVEMENT06";
+    public static String SHOUT_ONTOLOGY_PROTOCOL_OUT = "06shoutOntologyOut";
+    public static String SHOUT_ONTOLOGY_PROTOCOL_IN = "06shoutOntologyIn";
+
     public static String ONTOLOGY = "ontology";
+
     public static String AGENT_STATE = "agentState";
     public static String COMPUTED_POSITION = "computedPosition";
     public static String ONTOLOGY_NAMESPACE = "http://www.semanticweb.org/usuari/ontologies/P2_ontologia";
@@ -47,6 +49,11 @@ public class Constants {
 
     public static Type observationsType() {
         return new TypeToken<List<Couple<gsLocation, List<Couple<Observation, Integer>>>>>() {
+        }.getType();
+    }
+
+    public static Type statementsType() {
+        return new TypeToken<List<Statement>>() {
         }.getType();
     }
 
