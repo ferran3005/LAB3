@@ -166,6 +166,7 @@ public class OntologyManager {
 
 
         updateAgentLastSeen(situatedAgentName, model);
+        updateLocationLastSeen(locationId, model);
         addVisited(model, locationId);
     }
 

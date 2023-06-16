@@ -13,6 +13,7 @@ import bdi4jade.plan.DefaultPlan;
 import bdi4jade.plan.Plan;
 import bdi4jade.reasoning.*;
 import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.DFSHandler;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.RouteHandler;
@@ -43,6 +44,11 @@ public class BDIAgent extends SingleCapabilityAgent {
     public DFSHandler dfsHandler = new DFSHandler();
     public RouteHandler routeHandler;
     public AID situatedAgent;
+    public int lockPicking;
+    public int strength;
+    public int backPackCapacityDiamond;
+    public int backPackCapacityGold;
+    public Observation treasureType;
     public String agentType;
     public List<Couple<ACLMessage, Direction>> log = new ArrayList<>();
 

@@ -19,23 +19,24 @@ public class CollectorRouteHandler implements RouteHandler {
     @Override
     public boolean updateStack(Model model, String fase, String situatedAgentName) {
 
-
         return false;
     }
 
     @Override
     public void updateAfterMovement() {
+
         route.pop();
     }
 
     @Override
     public void discardTop() {
+
         route.pop();
     }
 
     @Override
     public String computeNextPosition(Model model, AID situatedAgent) {
-
+        //TODO Saber espacio
         if(route.isEmpty()){
             updateStack(model, "fase", situatedAgent.getLocalName());
         }

@@ -19,7 +19,9 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNext
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ShoutOntologyGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.MovementData;
 import jade.lang.acl.ACLMessage;
+import net.sourceforge.plantuml.graph.Move;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.ontology.impl.OntModelImpl;
 import org.apache.jena.rdf.model.Model;
@@ -108,15 +110,16 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                         originLocationId,
                         obs.getLeft().getLocationId(),
                         model); //añadimos la posición adyacente
-            }
-            for (Couple<Observation, Integer> observation : obs.getRight()) {
+
+                for (Couple<Observation, Integer> observation : obs.getRight()) {
 
 
-                OntologyManager.addObservation(
-                        obs.getLeft().getLocationId(),
-                        observation.getLeft(),
-                        (observation.getRight() != null) ? observation.getRight() : 0,
-                        model);
+                    OntologyManager.addObservation(
+                            obs.getLeft().getLocationId(),
+                            observation.getLeft(),
+                            (observation.getRight() != null) ? observation.getRight() : 0,
+                            model);
+                }
             }
         }
     }
@@ -176,6 +179,12 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         } else if (message.getPerformative() == ACLMessage.INFORM) {
             Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
             String currentPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
+
+            String dataGson = message.getContent();
+            MovementData mov =  new Gson().fromJson(dataGson, MovementData.class);
+
+            ((BDIAgent) getCapability().getMyAgent()).backPackCapacityDiamond = mov.backpackFreeSpaceDiamate;
+            ((BDIAgent) getCapability().getMyAgent()).backPackCapacityGold = mov.backpackFreeSpaceOro;
 
             String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
             OntologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
