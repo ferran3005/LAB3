@@ -11,7 +11,9 @@ import bdi4jade.plan.planbody.BeliefGoalPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.SituatedData;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
+import jade.core.AID;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -30,11 +32,11 @@ public class ComputeNextPositionPlanBody extends BeliefGoalPlanBody {
     protected void execute() {
 
         Model model = (Model) getBeliefBase().getBelief(ONTOLOGY).getValue();
-        String situatedName = ((BDIAgent) this.myAgent).situatedAgent.getLocalName();
+        String situatedName = ((BDIAgent) this.myAgent).situatedData.getSituatedAgent().getLocalName();
 
-        int gold = ((BDIAgent) this.myAgent).backPackCapacityGold;
-        int diamond = ((BDIAgent) this.myAgent).backPackCapacityDiamond;
-        String nextMove = ((BDIAgent) this.myAgent).routeHandler.computeNextPosition(model, ((BDIAgent) this.myAgent).situatedAgent, gold, diamond);
+        SituatedData data = ((BDIAgent) this.myAgent).situatedData;
+        AID situatedAgent = ((BDIAgent) this.myAgent).situatedData.getSituatedAgent();
+        String nextMove = ((BDIAgent) this.myAgent).routeHandler.computeNextPosition(model, situatedAgent, data);
         getCapability().getBeliefBase().addOrUpdateBelief(new TransientBelief(COMPUTED_POSITION, nextMove));
         getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.MOVEMENT_COMPUTED);
         addRequestMovementGoal();

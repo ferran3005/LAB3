@@ -20,7 +20,7 @@ public class RequestMovementPlanBody extends BeliefGoalPlanBody {
     protected void execute() {
         String computedPosition = (String) getCapability().getBeliefBase().getBelief(COMPUTED_POSITION).getValue();
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-        request.addReceiver(((BDIAgent) this.myAgent).situatedAgent);
+        request.addReceiver(((BDIAgent) this.myAgent).situatedData.getSituatedAgent());
         request.setProtocol(MOVEMENT_PROTOCOL);
         request.setSender(this.myAgent.getAID());
         request.setContent(computedPosition);

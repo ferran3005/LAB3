@@ -34,9 +34,9 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
                 AID provider = dfd.getName();
                 ServiceDescription sd = (ServiceDescription) dfd.getAllServices().next();
                 System.out.println("Found situated! " + provider.getName());
-                ((BDIAgent) this.myAgent).situatedAgent = provider;
+                ((BDIAgent) this.myAgent).situatedData.setSituatedAgent(provider);
                 String type = sd.getType();
-                ((BDIAgent) this.myAgent).agentType = type;
+                ((BDIAgent) this.myAgent).situatedData.setAgentType(type);
                 if(type.equals("explorer")) {
                     ((BDIAgent) this.myAgent).routeHandler = new ExplorerRouteHandler();
                 }
@@ -55,7 +55,7 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
 
     private void updateOntology(String situatedAgentName) {
         BDIAgent agent = (BDIAgent) this.myAgent;
-        String type = agent.agentType;
+        String type = agent.situatedData.getAgentType();
         Belief b = agent.getCapability().getBeliefBase().getBelief(ONTOLOGY);
         Model model = (Model) b.getValue();
         OntologyManager.addAgent(situatedAgentName, type, model);

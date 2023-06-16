@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers;
 
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.SituatedData;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
 import jade.core.AID;
 import org.apache.jena.ontology.Individual;
@@ -53,7 +54,7 @@ public class CollectorRouteHandler implements RouteHandler {
     }
 
     @Override
-    public String computeNextPosition(Model model, AID situatedAgent, int gold, int diamond) {
+    public String computeNextPosition(Model model, AID situatedAgent, SituatedData situatedData) {
         //FASE 1    -> busca tanker
         //FASE 2    -> busca tesoro
         //FASE 3 +  -> busca no visitados / busca mas tiempo sin ver
@@ -61,7 +62,7 @@ public class CollectorRouteHandler implements RouteHandler {
         if(!allExplored)isMapExplored(model);
 
         // TODO Mirar el % de oro
-        if(gold > 20 || diamond > 20) // tanker
+        if(situatedData.getBackPackCapacityGold() > 20 || situatedData.getBackPackCapacityDiamond() > 20) // tanker
             fase1(model, situatedAgent.getLocalName());
         else    // recurso
             fase2(model, situatedAgent.getLocalName());

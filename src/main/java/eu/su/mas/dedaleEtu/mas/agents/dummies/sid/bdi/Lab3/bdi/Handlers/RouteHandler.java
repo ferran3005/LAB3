@@ -5,6 +5,7 @@ import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.gs.gsLocation;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.SituatedData;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
 import jade.core.AID;
 import org.apache.jena.rdf.model.Model;
@@ -33,7 +34,7 @@ public interface RouteHandler {
 
 
 
-    public String computeNextPosition(Model model, AID situatedAgentName, int gold, int diamond);
+    public String computeNextPosition(Model model, AID situatedAgentName, SituatedData situatedData);
 
     public void isMapExplored(Model model);
 }

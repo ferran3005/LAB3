@@ -35,7 +35,7 @@ public class ShoutOntologyPlanBody extends BeliefGoalPlanBody {
         String ontologyJson = writer.toString();
 
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-        request.addReceiver(((BDIAgent) this.myAgent).situatedAgent);
+        request.addReceiver(((BDIAgent) this.myAgent).situatedData.getSituatedAgent());
         request.setProtocol(SHOUT_ONTOLOGY_PROTOCOL_OUT);
         request.setSender(this.myAgent.getAID());
         request.setContent(ontologyJson);

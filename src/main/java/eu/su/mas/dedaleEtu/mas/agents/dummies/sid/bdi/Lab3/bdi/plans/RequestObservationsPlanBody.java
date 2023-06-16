@@ -18,7 +18,7 @@ public class RequestObservationsPlanBody extends BeliefGoalPlanBody {
     @Override
     protected void execute() {
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-        request.addReceiver(((BDIAgent) this.myAgent).situatedAgent);
+        request.addReceiver(((BDIAgent) this.myAgent).situatedData.getSituatedAgent());
         request.setProtocol(OBSERVATIONS_PROTOCOL);
         request.setSender(this.myAgent.getAID());
         this.myAgent.send(request);

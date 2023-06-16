@@ -47,7 +47,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
     @Override
     public void action() {
-        if(message.getSender().getName().equals(((BDIAgent) getCapability().getMyAgent()).situatedAgent.getName())) {
+        if(message.getSender().getName().equals(((BDIAgent) getCapability().getMyAgent()).situatedData.getSituatedAgent().getName())) {
             setEndState(Plan.EndState.SUCCESSFUL);
             BeliefBase beliefBase = getCapability().getBeliefBase();
             BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
@@ -87,7 +87,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
     private void updateOntologyWithObservations(String json) {
 
-        String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
+        String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedData.getSituatedAgent().getLocalName();
         Model model = (Model) getCapability().getBeliefBase().getBelief(ONTOLOGY).getValue();
 
         List<Couple<Location, List<Couple<Observation, Integer>>>> observations =
@@ -183,10 +183,10 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
             String dataGson = message.getContent();
             MovementData mov =  new Gson().fromJson(dataGson, MovementData.class);
 
-            ((BDIAgent) getCapability().getMyAgent()).backPackCapacityDiamond = mov.backpackFreeSpaceDiamate;
-            ((BDIAgent) getCapability().getMyAgent()).backPackCapacityGold = mov.backpackFreeSpaceOro;
+            ((BDIAgent) getCapability().getMyAgent()).situatedData.setBackPackCapacityDiamond(mov.backpackFreeSpaceDiamate);
+            ((BDIAgent) getCapability().getMyAgent()).situatedData.setBackPackCapacityGold(mov.backpackFreeSpaceOro);
 
-            String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedAgent.getLocalName();
+            String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedData.getSituatedAgent().getLocalName();
             OntologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);
             ((BDIAgent) getCapability().getMyAgent()).routeHandler.updateAfterMovement();
 
