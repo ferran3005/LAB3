@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.*;
 
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.DATA_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.MOVEMENT_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.OBSERVATIONS_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.SHOUT_ONTOLOGY_PROTOCOL_IN;
@@ -36,6 +37,9 @@ public class Listen extends Behaviour {
                     this.myAgent.addBehaviour(new CanIMove(msg.createReply(), msg.getContent()));
                 } else if (msg.getProtocol().equals(SHOUT_ONTOLOGY_PROTOCOL_OUT)) {
                     this.myAgent.addBehaviour(new ShoutOntology(msg.createReply(), msg.getContent()));
+                }
+                else if(msg.getProtocol().equals(DATA_PROTOCOL)) {
+                    this.myAgent.addBehaviour(new SendData(msg.createReply()));
                 }
                 else {
                     block();

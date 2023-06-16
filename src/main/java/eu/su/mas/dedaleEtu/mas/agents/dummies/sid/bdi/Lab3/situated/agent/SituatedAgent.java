@@ -36,12 +36,11 @@ public class SituatedAgent extends AbstractDedaleAgent {
         entity.getExpertise();
         int lock = 0;
         int strength= 0;
-        for(Iterator<Couple<LockElement.LockType, Integer>> it = entity.getExpertise().iterator(); it.hasNext();){
+        for (Couple<LockElement.LockType, Integer> a : entity.getExpertise()) {
 
-            Couple<LockElement.LockType, Integer> a = it.next();
-            if(a.getLeft().getName().equals("LockPicking"))
+            if (a.getLeft().getName().equals("LockPicking"))
                 lock = a.getRight();
-             else
+            else
                 strength = a.getRight();
 
         }
@@ -56,8 +55,7 @@ public class SituatedAgent extends AbstractDedaleAgent {
                 entity.getDiamondCapacity(),
                 entity.getMyTreasureType(),
                 entity.getMyEntityType().getName(),
-                getAID()
-                //entity.getAgentName()
+                null
         );
 
         lb.add(new RegisterDF(this, name));

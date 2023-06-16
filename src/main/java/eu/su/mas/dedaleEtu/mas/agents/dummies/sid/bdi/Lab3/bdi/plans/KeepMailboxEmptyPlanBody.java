@@ -2,7 +2,9 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans;
 
 import bdi4jade.annotation.Parameter;
 import bdi4jade.annotation.Parameter.Direction;
+import bdi4jade.belief.Belief;
 import bdi4jade.belief.BeliefBase;
+import bdi4jade.belief.TransientBelief;
 import bdi4jade.goal.Goal;
 import bdi4jade.goal.GoalTemplate;
 import bdi4jade.plan.DefaultPlan;
@@ -15,6 +17,7 @@ import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.SituatedData;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNextPositionGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeRandomMovementGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
@@ -36,6 +39,7 @@ import java.util.Random;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.AGENT_STATE;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.COMPUTED_POSITION;
+import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.DATA_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.MOVEMENT_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.OBSERVATIONS_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY;
@@ -48,7 +52,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
     @Override
     public void action() {
-        if(message.getSender().getName().equals(((BDIAgent) getCapability().getMyAgent()).situatedData.getSituatedAgent().getName())) {
+        if(message.getSender().getName().equals(((BDIAgent) getCapability().getMyAgent()).situatedAgent.getName())) {
             setEndState(Plan.EndState.SUCCESSFUL);
             BeliefBase beliefBase = getCapability().getBeliefBase();
             BdiStates agentState = (BdiStates) beliefBase.getBelief(AGENT_STATE).getValue();
@@ -63,10 +67,21 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 handleShoutOntologyResponses(message);
             } else if(message.getProtocol().equals(SHOUT_ONTOLOGY_PROTOCOL_IN)) {
                 mergeOntologies(message.getContent());
+            } else if((agentState.equals(BdiStates.DATA_REQUEST_SENT) && message.getProtocol().equals(DATA_PROTOCOL))) {
+                handleDataResponses(message);
             }
             setEndState(Plan.EndState.SUCCESSFUL);
             ((BDIAgent) getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
         }
+    }
+
+    private void handleDataResponses(ACLMessage message) {
+        ((BDIAgent) getCapability().getMyAgent()).situatedData = new Gson().fromJson(message.getContent(), SituatedData.class);
+        ((BDIAgent) getCapability().getMyAgent()).situatedData.setSituatedAgent(((BDIAgent) getCapability().getMyAgent()).situatedAgent);
+        Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.INITIAL);
+        getCapability().getBeliefBase().addOrUpdateBelief(agentState);
+
+        addRequestUpdateGoal();
     }
 
     private void mergeOntologies(String content) {

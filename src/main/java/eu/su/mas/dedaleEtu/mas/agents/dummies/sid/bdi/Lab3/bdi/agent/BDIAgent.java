@@ -15,11 +15,13 @@ import bdi4jade.reasoning.*;
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.RouteHandler;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.RequestDataGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.FindSituatedPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.KeepMailboxEmptyPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RegisterPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SPARQLGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RequestDataPlanBody;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.plans.RequestObservationsPlanBody;
 import jade.core.AID;
 import jade.lang.acl.ACLMessage;
@@ -40,29 +42,30 @@ import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constan
 
 public class BDIAgent extends SingleCapabilityAgent {
     public RouteHandler routeHandler;
-    public SituatedData situatedData = new SituatedData();
+    public AID situatedAgent;
+    public SituatedData situatedData;
     public List<Couple<ACLMessage, Direction>> log = new ArrayList<>();
 
     public BDIAgent() {
         // Create initial beliefs
         Belief iAmRegistered = new TransientPredicate(I_AM_REGISTERED, false);
         Belief ontology = new TransientBelief(ONTOLOGY, loadOntology());
-        Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.INITIAL);
+        Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.UNKNOWN);
 
         // Add initial desires
         Goal registerGoal = new PredicateGoal(I_AM_REGISTERED, true);
         Goal findSituatedGoal = new SPARQLGoal(ONTOLOGY, QUERY_SITUATED_AGENT);
-        Goal sendUpdateRequestGoal = new SendUpdateRequestGoal(AGENT_STATE);
+        Goal requestDataGoal = new RequestDataGoal("RequestData");
 
 
 
-        SequentialGoal orderedGoals = new SequentialGoal(Arrays.asList(registerGoal, findSituatedGoal, sendUpdateRequestGoal));
+        SequentialGoal orderedGoals = new SequentialGoal(Arrays.asList(registerGoal, findSituatedGoal, requestDataGoal));
         addGoal(orderedGoals);
 
         // Declare goal templates
         GoalTemplate registerGoalTemplate = matchesGoal(registerGoal);
         GoalTemplate findSituatedTemplate = matchesGoal(findSituatedGoal);
-        GoalTemplate sendUpdateRequestGoalTemplate = matchesGoal(sendUpdateRequestGoal);
+        GoalTemplate requestDataGoalTemplate = matchesGoal(requestDataGoal);
 
         // Assign plan bodies to goals
         Plan registerPlan = new DefaultPlan(registerGoalTemplate, RegisterPlanBody.class);
@@ -73,15 +76,14 @@ public class BDIAgent extends SingleCapabilityAgent {
 //        Plan ObservationProtocolPlan = new DefaultPlan(MessageTemplate.MatchProtocol(OBSERVATIONS_PROTOCOL), ObservationProtocolMessagePlan.class);
 //        Plan MovedProtocolPlan = new DefaultPlan(MessageTemplate.MatchProtocol(MOVED_PROTOCOL), MovedProtocolMessagePlan.class);
         //TODO <--
-
-        Plan requestObservationPlan = requestObservationsPlan(sendUpdateRequestGoalTemplate); //Only sends a message requesting information
+        Plan requestDataPlan = requestDataPlan(requestDataGoalTemplate);
 
         // Init plan library
         getCapability().getPlanLibrary().addPlan(registerPlan);
         getCapability().getPlanLibrary().addPlan(findSituatedPlan);
         getCapability().getPlanLibrary().addPlan(keepMailboxEmptyPlan);
 
-        getCapability().getPlanLibrary().addPlan(requestObservationPlan);
+        getCapability().getPlanLibrary().addPlan(requestDataPlan);
 
         // Init belief base
         getCapability().getBeliefBase().addBelief(iAmRegistered);
@@ -96,6 +98,15 @@ public class BDIAgent extends SingleCapabilityAgent {
         overrideOptionGenerationFunction();
         overrideDeliberationFunction();
         overridePlanSelectionStrategy();
+    }
+
+    private Plan requestDataPlan(GoalTemplate requestDataGoalTemplate) {
+        return new DefaultPlan(requestDataGoalTemplate, RequestDataPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.UNKNOWN);
+            }
+        };
     }
 
     private void overrideBeliefRevisionStrategy() {
@@ -179,14 +190,5 @@ public class BDIAgent extends SingleCapabilityAgent {
         model.read(ONTOLOGY_NAMESPACE);
 
         return model;
-    }
-
-    private Plan requestObservationsPlan(GoalTemplate sendUpdateRequestGoalTemplate) {
-        return new DefaultPlan(sendUpdateRequestGoalTemplate, RequestObservationsPlanBody.class) {
-            @Override
-            public boolean isContextApplicable(Goal goal) {
-                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.INITIAL);
-            }
-        };
     }
 }

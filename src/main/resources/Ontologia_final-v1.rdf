@@ -138,35 +138,11 @@
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#DeployCollector -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#DeployCollector">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector"/>
-    </owl:Class>
-    
-
-
     <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Diamond -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Diamond">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Resource"/>
         <owl:disjointWith rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Gold"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Explorer -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Explorer">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
     </owl:Class>
     
 
@@ -263,18 +239,34 @@
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Tanker -->
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Tanker">
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#agentCollect -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#agentCollect">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
     </owl:Class>
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind -->
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#agentExplo -->
 
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Wind">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#agentExplo">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#agentTanker -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#agentTanker">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
     </owl:Class>
 </rdf:RDF>
 

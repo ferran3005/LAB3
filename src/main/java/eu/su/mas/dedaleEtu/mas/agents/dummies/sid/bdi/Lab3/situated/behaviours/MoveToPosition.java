@@ -3,6 +3,7 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.behaviours;
 import bdi4jade.annotation.Parameter;
 import com.google.gson.Gson;
 import dataStructures.tuple.Couple;
+import eu.su.mas.dedale.env.EntityType;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.gs.gsLocation;
@@ -30,7 +31,7 @@ public class MoveToPosition extends  OneShotBehaviour{
     public void action() {
 
         if(((AbstractDedaleAgent) this.myAgent).moveTo(new gsLocation(msg.getContent()))){
-            if( ((SituatedAgent) this.myAgent).agentType == "collector") {
+            if(((SituatedAgent) this.myAgent).data.getAgentType().equals(EntityType.AGENT_COLLECTOR.getName())) {
                 tryToCollect();
             }
             successMove();

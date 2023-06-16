@@ -15,6 +15,7 @@ public class Constants {
     public static String MOVEMENT_PROTOCOL = "MOVEMENT06";
     public static String SHOUT_ONTOLOGY_PROTOCOL_OUT = "06shoutOntologyOut";
     public static String SHOUT_ONTOLOGY_PROTOCOL_IN = "06shoutOntologyIn";
+    public static String DATA_PROTOCOL = "DATA06";
 
     public static String ONTOLOGY = "ontology";
 

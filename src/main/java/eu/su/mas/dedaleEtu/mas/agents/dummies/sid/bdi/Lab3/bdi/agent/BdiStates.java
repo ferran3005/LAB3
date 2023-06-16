@@ -1,6 +1,8 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent;
 
 public enum BdiStates {
+    UNKNOWN,
+    DATA_REQUEST_SENT,
     INITIAL,
     UPDATE_REQUEST_SENT,
     UPDATE_REQUEST_AGREED,
