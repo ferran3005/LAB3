@@ -5,6 +5,8 @@ import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.gs.gsLocation;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
+import jade.core.AID;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public interface RouteHandler {
 
 
 
-    public boolean updateStack(Model model, String fase, String situatedAgentName);
+    public boolean updateStack(Model model, String fase, String situatedAgent);
 
 
     public void updateAfterMovement();
@@ -31,6 +33,6 @@ public interface RouteHandler {
 
 
 
-    public String computeNextPosition(Model model, String situatedAgentName);
+    public String computeNextPosition(Model model, AID situatedAgentName);
 
 }

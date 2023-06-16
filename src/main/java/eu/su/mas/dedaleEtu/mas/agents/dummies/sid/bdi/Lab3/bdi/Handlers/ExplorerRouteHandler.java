@@ -2,6 +2,8 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers;
 
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
+import jade.core.AID;
 import org.apache.jena.ontology.impl.OntModelImpl;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
@@ -31,8 +33,13 @@ public class ExplorerRouteHandler implements RouteHandler{
         else{ //fase 2
             // TODO fase 2
 
-            Instant maxLastUpdated = Instant.now();
 
+            List  a = ((OntModelImpl) model).listIndividuals().toList();
+            Instant maxLastUpdated = Instant.now();
+            for(int i =0; i < a.size(); ++i){
+
+                if(a.get(0).equals("d"))maxLastUpdated = null;
+            }
             ((OntModelImpl) model).listIndividuals().forEach(
                     ind -> {
                         if (ind.getURI() != null) {
@@ -44,9 +51,9 @@ public class ExplorerRouteHandler implements RouteHandler{
                             );
                             if(actual != null) {
                                 Instant actualInstant = Instant.ofEpochMilli(actual.getLiteral().getLong());
-                                if(actualInstant.isAfter(maxLastUpdated)){ // mirar
-                                    //maxLastUpdated =
-                                }
+                                //if(maxLastUpdated.isAfter(actualInstant)){ // mirar
+                                    //maxLastUpdated = maxLastUpdated;
+                                //}
                             }
                         }
                     }
@@ -71,12 +78,12 @@ public class ExplorerRouteHandler implements RouteHandler{
         route.pop();
     }
 
-    public String computeNextPosition(Model model, String situatedAgentName) {
+    public String computeNextPosition(Model model, AID situatedAgent) {
 
         if(!allExplored)isMapExplored(model);
         if(route.isEmpty()){
             String fase = !allExplored ? "fase1" : "fase2";
-            updateStack(model, fase, situatedAgentName);
+            updateStack(model, fase, situatedAgent.getLocalName());
         }
 
         return route.peek().getLocationId();
