@@ -11,9 +11,9 @@
     "lockPickingExpertise":1
   },
   {"agentType":"agentExplo",
-  "agentName": "ImHere",
+  "agentName": "Lab2",
   "communicationRange": 3,
-  "initialLocation": "free",
+  "initialLocation": "87",
   "backPackCapacityGold": -1,
   "backPackCapacityDiamond":-1,
   "detectionRadius": 0,
@@ -21,7 +21,7 @@
   "lockPickingExpertise":1
   },
   {"agentType":"agentExplo",
-    "agentName": "Lab",
+    "agentName": "Lab3",
     "communicationRange": 3,
     "initialLocation": "15",
     "backPackCapacityGold": -1,

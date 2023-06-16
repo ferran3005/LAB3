@@ -2,6 +2,7 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers;
 
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.SituatedData;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
 import jade.core.AID;
 import org.apache.jena.ontology.Individual;
@@ -42,7 +43,7 @@ public class ExplorerRouteHandler implements RouteHandler{
         route.pop();
     }
 
-    public String computeNextPosition(Model model, AID situatedAgent, int gold, int diamond) {
+    public String computeNextPosition(Model model, AID situatedAgent,  SituatedData situatedData) {
 
         if(!allExplored)isMapExplored(model);
         if(route.isEmpty()){

@@ -15,8 +15,8 @@ public class RegisterDF extends OneShotBehaviour {
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(agent.getAID());
         ServiceDescription sd = new ServiceDescription();
-        sd.setName("situated-agent06");
-        sd.setType(((SituatedAgent) myAgent).agentType);
+        sd.setName((String) myAgent.getArguments()[2]);
+        sd.setType(((SituatedAgent) myAgent).data.agentType.getName());
         dfd.addServices(sd);
         try {
             DFService.register(this.myAgent, dfd);

@@ -200,7 +200,9 @@ public class Principal {
         // The platform will not work unless all agents defined in the entities file are bound by name
         // to agents in this list.
         AgentController[] agentsToAdd = new AgentController[]{
-                newAgent("Lab", new String[] {"explorer"}, SituatedAgent.class),
+                newAgent("Lab", new String[] {"situated-agent06-explo1"}, SituatedAgent.class),
+                newAgent("Lab2", new String[] {"situated-agent06-explo2"}, SituatedAgent.class),
+
                 //newDummyMovingAgent("ImHere"),
                 //newGolem("Golem1"),
                 //newGolem("Golem2"),
@@ -223,7 +225,10 @@ public class Principal {
         try {
             AgentController nonDedaleAgent =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
-                            "BDI1", BDIAgent.class.getName(), new Object[] {});
+                            "BDI1", BDIAgent.class.getName(), new Object[] {"situated-agent06-explo1"});
+                AgentController nonDedaleAgent2 =
+                    containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
+                            "BDI2", BDIAgent.class.getName(), new Object[] {"situated-agent06-explo2"});
             agentList.add(nonDedaleAgent);
         } catch (StaleProxyException e) {
             e.printStackTrace();

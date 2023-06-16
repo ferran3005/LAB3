@@ -4,6 +4,7 @@ import bdi4jade.belief.Belief;
 import bdi4jade.core.SingleCapabilityAgent;
 import bdi4jade.plan.Plan;
 import bdi4jade.plan.planbody.BeliefGoalPlanBody;
+import eu.su.mas.dedale.env.EntityType;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.CollectorRouteHandler;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.ExplorerRouteHandler;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.OntologyManager;
@@ -24,7 +25,11 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
     protected void execute() {
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription templateSd = new ServiceDescription();
-        templateSd.setName("situated-agent06");
+
+        final Object[] args = myAgent.getArguments();
+        String situatedRegName = (String) args[0];
+        templateSd.setName(situatedRegName);
+
         template.addServices(templateSd);
         DFAgentDescription[] results;
         try {
@@ -36,7 +41,7 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
                 System.out.println("Found situated! " + provider.getName());
                 ((BDIAgent) this.myAgent).situatedData.setSituatedAgent(provider);
                 String type = sd.getType();
-                ((BDIAgent) this.myAgent).situatedData.setAgentType(type);
+                ((BDIAgent) this.myAgent).situatedData.setAgentType(EntityType.valueOf(type));
                 if(type.equals("explorer")) {
                     ((BDIAgent) this.myAgent).routeHandler = new ExplorerRouteHandler();
                 }
@@ -55,9 +60,9 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
 
     private void updateOntology(String situatedAgentName) {
         BDIAgent agent = (BDIAgent) this.myAgent;
-        String type = agent.situatedData.getAgentType();
+        EntityType type = agent.situatedData.getAgentType();
         Belief b = agent.getCapability().getBeliefBase().getBelief(ONTOLOGY);
         Model model = (Model) b.getValue();
-        OntologyManager.addAgent(situatedAgentName, type, model);
+        OntologyManager.addAgent(situatedAgentName, type.getName(), model);
     }
 }

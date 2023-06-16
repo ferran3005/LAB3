@@ -1,5 +1,6 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent;
 
+import eu.su.mas.dedale.env.EntityType;
 import eu.su.mas.dedale.env.Observation;
 import jade.core.AID;
 
@@ -24,7 +25,7 @@ public class SituatedData {
                         int maxCapGold,
                         int maxCapDiam,
                         Observation treasureType,
-                        String agentType,
+                        EntityType agentType,
                         AID situatedAgent) {
         this.lockPicking = lockPicking;
         this.strength = strength;
@@ -44,7 +45,7 @@ public class SituatedData {
     public int maxCapGold;
     public int maxCapDiam;
     public Observation treasureType;
-    public String agentType;
+    public EntityType agentType;
     public AID situatedAgent;
 
     public int getLockPicking() {
@@ -103,11 +104,11 @@ public class SituatedData {
         this.treasureType = treasureType;
     }
 
-    public String getAgentType() {
+    public EntityType getAgentType() {
         return agentType;
     }
 
-    public void setAgentType(String agentType) {
+    public void setAgentType(EntityType agentType) {
         this.agentType = agentType;
     }
 

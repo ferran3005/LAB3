@@ -55,18 +55,19 @@ public class CollectorRouteHandler implements RouteHandler {
 
     @Override
     public String computeNextPosition(Model model, AID situatedAgent, SituatedData situatedData) {
-        //FASE 1    -> busca tanker
-        //FASE 2    -> busca tesoro
-        //FASE 3 +  -> busca no visitados / busca mas tiempo sin ver
 
-        if(!allExplored)isMapExplored(model);
+        if(route.isEmpty()){
+            if(!allExplored)
+                isMapExplored(model);
 
-        // TODO Mirar el % de oro
-        if(situatedData.getBackPackCapacityGold() > 20 || situatedData.getBackPackCapacityDiamond() > 20) // tanker
-            fase1(model, situatedAgent.getLocalName());
-        else    // recurso
-            fase2(model, situatedAgent.getLocalName());
-        if(route.isEmpty()) updateStack(model, "",situatedAgent.getLocalName());
+            double gold = situatedData.getBackPackCapacityGold()/ situatedData.getMaxCapGold();
+            double diamond = situatedData.getBackPackCapacityDiamond()/ situatedData.getMaxCapDiam();
+            if(gold > 50 || diamond > 50) // tanker
+                fase1(model, situatedAgent.getLocalName());
+            else    // recurso
+                fase2(model, situatedAgent.getLocalName());
+            if(route.isEmpty()) updateStack(model, "",situatedAgent.getLocalName());
+        }
 
         return route.peek().getLocationId();
     }
