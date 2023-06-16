@@ -13,6 +13,7 @@ import org.apache.jena.rdf.model.Statement;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
@@ -148,5 +149,16 @@ public class CollectorRouteHandler implements RouteHandler {
                     }
                 }
         );
+    }
+
+    @Override
+    public String computeRandomPath(Model model, AID situatedAgent, SituatedData situatedData) {
+        route.clear();
+        route = OntologyManager.shortestPathToTarget(model, situatedAgent.getLocalName(), (current) -> {
+                    int randomNumber = new Random().nextInt(100);
+                    return randomNumber < 5;
+                }
+        );
+        return route.empty() ? computeRandomPath(model, situatedAgent, situatedData) : route.peek().getLocationId();
     }
 }

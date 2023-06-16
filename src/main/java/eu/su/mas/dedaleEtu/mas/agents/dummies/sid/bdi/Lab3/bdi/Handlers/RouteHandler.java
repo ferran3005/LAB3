@@ -37,4 +37,6 @@ public interface RouteHandler {
     public String computeNextPosition(Model model, AID situatedAgentName, SituatedData situatedData);
 
     public void isMapExplored(Model model);
+
+    public String computeRandomPath(Model model, AID situatedAgent, SituatedData situatedData);
 }

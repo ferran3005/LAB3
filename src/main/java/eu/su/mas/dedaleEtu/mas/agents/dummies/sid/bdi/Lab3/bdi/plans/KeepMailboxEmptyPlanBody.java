@@ -16,6 +16,7 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers.Ontology
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BdiStates;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeNextPositionGoal;
+import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ComputeRandomMovementGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendMovementRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.SendUpdateRequestGoal;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.goals.ShoutOntologyGoal;
@@ -173,7 +174,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 addRequestMovementGoal();
             } else {
                 getCapability().getBeliefBase().updateBelief(AGENT_STATE, BdiStates.UPDATED);
-                //COMPUTE RANDOM
+                addComputeRandomPositionGoal();
             }
 
         } else if (message.getPerformative() == ACLMessage.INFORM) {
@@ -230,6 +231,23 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         getCapability().getPlanLibrary().addPlan(computeNextMovementPlan);
     }
 
+    void addComputeRandomPositionGoal() {
+        Goal computeRandomPositionGoal = new ComputeRandomMovementGoal(AGENT_STATE + "ComputeRandom");
+        getCapability().getMyAgent().addGoal(computeRandomPositionGoal);
+        GoalTemplate computeRandomPositionGoalTemplate = matchesGoal(computeRandomPositionGoal);
+        Plan computeRandomMovementPlan = computeRandomMovementPlan(computeRandomPositionGoalTemplate);
+        getCapability().getPlanLibrary().addPlan(computeRandomMovementPlan);
+    }
+
+    private Plan computeRandomMovementPlan(GoalTemplate computeRandomPositionGoalTemplate) {
+        return new DefaultPlan(computeRandomPositionGoalTemplate, ComputeRandomMovementPlanBody.class) {
+            @Override
+            public boolean isContextApplicable(Goal goal) {
+                return getCapability().getBeliefBase().getBelief(AGENT_STATE).getValue().equals(BdiStates.UPDATED);
+            }
+        };
+    }
+
     void addRequestMovementGoal() {
         Goal sendMovementRequestGoal = new SendMovementRequestGoal(AGENT_STATE + "MoveReq");
         getCapability().getMyAgent().addGoal(sendMovementRequestGoal);
@@ -237,6 +255,8 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
         Plan requestMovementPlan = requestMovementPlan(sendMovementRequestGoalTemplate);
         getCapability().getPlanLibrary().addPlan(requestMovementPlan);
     }
+
+
 
     private GoalTemplate matchesGoal(Goal goalToMatch) {
         return new GoalTemplate() {

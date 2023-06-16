@@ -13,7 +13,7 @@
   {"agentType":"agentExplo",
   "agentName": "Lab2",
   "communicationRange": 3,
-  "initialLocation": "87",
+  "initialLocation": "free",
   "backPackCapacityGold": -1,
   "backPackCapacityDiamond":-1,
   "detectionRadius": 0,

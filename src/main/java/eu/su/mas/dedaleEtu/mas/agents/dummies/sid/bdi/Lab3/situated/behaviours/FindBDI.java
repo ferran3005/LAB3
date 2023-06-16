@@ -9,10 +9,18 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
 public class FindBDI extends Behaviour {
+
+    String bdiName;
+
+    public FindBDI(String bdiName) {
+        super();
+        this.bdiName = bdiName;
+    }
     @Override
     public void action() {
         DFAgentDescription template = new DFAgentDescription();
         ServiceDescription templateSd = new ServiceDescription();
+        templateSd.setName(bdiName);
         templateSd.setType("bdi");
         template.addServices(templateSd);
         DFAgentDescription[] results;

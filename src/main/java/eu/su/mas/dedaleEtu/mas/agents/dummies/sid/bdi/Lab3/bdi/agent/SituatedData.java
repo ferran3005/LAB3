@@ -4,7 +4,10 @@ import eu.su.mas.dedale.env.EntityType;
 import eu.su.mas.dedale.env.Observation;
 import jade.core.AID;
 
-public class SituatedData {
+import java.io.Serializable;
+
+public class SituatedData implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     public SituatedData() {
         this.lockPicking = 0;
@@ -25,7 +28,7 @@ public class SituatedData {
                         int maxCapGold,
                         int maxCapDiam,
                         Observation treasureType,
-                        EntityType agentType,
+                        String agentType,
                         AID situatedAgent) {
         this.lockPicking = lockPicking;
         this.strength = strength;
@@ -45,7 +48,7 @@ public class SituatedData {
     public int maxCapGold;
     public int maxCapDiam;
     public Observation treasureType;
-    public EntityType agentType;
+    public String agentType;
     public AID situatedAgent;
 
     public int getLockPicking() {
@@ -104,11 +107,11 @@ public class SituatedData {
         this.treasureType = treasureType;
     }
 
-    public EntityType getAgentType() {
+    public String getAgentType() {
         return agentType;
     }
 
-    public void setAgentType(EntityType agentType) {
+    public void setAgentType(String agentType) {
         this.agentType = agentType;
     }
 

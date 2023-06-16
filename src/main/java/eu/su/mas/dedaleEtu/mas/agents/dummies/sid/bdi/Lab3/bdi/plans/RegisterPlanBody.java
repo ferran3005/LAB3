@@ -14,10 +14,14 @@ public class RegisterPlanBody extends BeliefGoalPlanBody {
     @Override
     public void execute() {
         Agent agent = this.myAgent;
+
+        final Object[] args = myAgent.getArguments();
+        String name = (String) args[1];
+
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(agent.getAID());
         ServiceDescription sd = new ServiceDescription();
-        sd.setName("deliberative-agent");
+        sd.setName(name);
         sd.setType("bdi");
         dfd.addServices(sd);
         try {

@@ -41,11 +41,11 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
                 System.out.println("Found situated! " + provider.getName());
                 ((BDIAgent) this.myAgent).situatedData.setSituatedAgent(provider);
                 String type = sd.getType();
-                ((BDIAgent) this.myAgent).situatedData.setAgentType(EntityType.valueOf(type));
-                if(type.equals("explorer")) {
+                ((BDIAgent) this.myAgent).situatedData.setAgentType(type);
+                if(type.equals(EntityType.AGENT_EXPLORER.getName())) {
                     ((BDIAgent) this.myAgent).routeHandler = new ExplorerRouteHandler();
                 }
-                else if(type.equals("collector")) {
+                else if(type.equals(EntityType.AGENT_COLLECTOR.getName())) {
                     ((BDIAgent) this.myAgent).routeHandler = new CollectorRouteHandler();
                 }
                 updateOntology(provider.getLocalName());
@@ -60,9 +60,9 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
 
     private void updateOntology(String situatedAgentName) {
         BDIAgent agent = (BDIAgent) this.myAgent;
-        EntityType type = agent.situatedData.getAgentType();
+        String type = agent.situatedData.getAgentType();
         Belief b = agent.getCapability().getBeliefBase().getBelief(ONTOLOGY);
         Model model = (Model) b.getValue();
-        OntologyManager.addAgent(situatedAgentName, type.getName(), model);
+        OntologyManager.addAgent(situatedAgentName, type, model);
     }
 }

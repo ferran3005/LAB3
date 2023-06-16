@@ -29,8 +29,10 @@ public class SituatedAgent extends AbstractDedaleAgent {
         List<Behaviour> lb = new ArrayList<>();
         final Object[] args = getArguments();
         EntityCharacteristics entity = (EntityCharacteristics) args[0];
+        String name = (String) args[2];
+        String bdiName = (String) args[3];
 
-         entity.getExpertise();
+        entity.getExpertise();
         int lock = 0;
         int strength= 0;
         for(Iterator<Couple<LockElement.LockType, Integer>> it = entity.getExpertise().iterator(); it.hasNext();){
@@ -52,13 +54,13 @@ public class SituatedAgent extends AbstractDedaleAgent {
                 entity.getGoldCapacity(),
                 entity.getDiamondCapacity(),
                 entity.getMyTreasureType(),
-                entity.getMyEntityType(),
+                entity.getMyEntityType().getName(),
                 getAID()
                 //entity.getAgentName()
         );
 
-        lb.add(new RegisterDF());
-        lb.add(new FindBDI());
+        lb.add(new RegisterDF(this, name));
+        lb.add(new FindBDI(bdiName));
         lb.add(new Listen());
         addBehaviour(new startMyBehaviours(this, lb));
     }

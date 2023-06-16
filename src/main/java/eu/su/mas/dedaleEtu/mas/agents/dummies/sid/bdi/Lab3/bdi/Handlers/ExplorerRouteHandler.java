@@ -13,13 +13,15 @@ import org.apache.jena.rdf.model.Statement;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.ONTOLOGY_NAMESPACE;
 
-public class ExplorerRouteHandler implements RouteHandler{
+public class ExplorerRouteHandler implements RouteHandler {
     public Stack<Location> route;
     public boolean allExplored;
+
     public ExplorerRouteHandler() {
         route = new Stack<>();
         allExplored = false;
@@ -27,7 +29,7 @@ public class ExplorerRouteHandler implements RouteHandler{
 
     public boolean updateStack(Model model, String fase, String situatedAgentName) {
 
-        if(fase.equals("fase1"))
+        if (fase.equals("fase1"))
             fase1(model, situatedAgentName);
         else //Fase 2
             fase2(model, situatedAgentName);
@@ -43,10 +45,20 @@ public class ExplorerRouteHandler implements RouteHandler{
         route.pop();
     }
 
-    public String computeNextPosition(Model model, AID situatedAgent,  SituatedData situatedData) {
+    public String computeRandomPath(Model model, AID situatedAgent, SituatedData situatedData) {
+        route.clear();
+        route = OntologyManager.shortestPathToTarget(model, situatedAgent.getLocalName(), (current) -> {
+                    int randomNumber = new Random().nextInt(100);
+                    return randomNumber < 5;
+                }
+        );
+        return route.empty() ? computeRandomPath(model, situatedAgent, situatedData) : route.peek().getLocationId();
+    }
 
-        if(!allExplored)isMapExplored(model);
-        if(route.isEmpty()){
+    public String computeNextPosition(Model model, AID situatedAgent, SituatedData situatedData) {
+
+        if (!allExplored) isMapExplored(model);
+        if (route.isEmpty()) {
             String fase = !allExplored ? "fase1" : "fase2";
             updateStack(model, fase, situatedAgent.getLocalName());
         }
@@ -54,7 +66,7 @@ public class ExplorerRouteHandler implements RouteHandler{
         return route.peek().getLocationId();
     }
 
-    public void isMapExplored(Model model){
+    public void isMapExplored(Model model) {
         allExplored = true; //Empezamos de esta premisa, y si hay algun nodo no visitado se pone a false
 
         ((OntModelImpl) model).listIndividuals().forEach(
@@ -62,35 +74,34 @@ public class ExplorerRouteHandler implements RouteHandler{
                     if (ind.getURI() != null) {
                         Statement visited = model.getProperty(model.getResource(ind.getURI()),
                                 model.getProperty(ONTOLOGY_NAMESPACE + "#visited"));
-                        if(visited != null && !visited.getBoolean()) allExplored = false;
+                        if (visited != null && !visited.getBoolean()) allExplored = false;
                     }
                 }
         );
     }
 
-    private void fase1(Model model, String situatedAgentName){
+    private void fase1(Model model, String situatedAgentName) {
         route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> !model.getProperty(
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
                 model.getProperty(ONTOLOGY_NAMESPACE + "#visited")).getBoolean()
         );
     }
 
-    private void fase2(Model model, String situatedAgentName){
+    private void fase2(Model model, String situatedAgentName) {
         List<Individual> indivs = ((OntModelImpl) model).listIndividuals().toList();
         Long maxLastUpdated = Instant.now().toEpochMilli();
         int positinId = 0;
 
         Property lastUpdated = model.getProperty(ONTOLOGY_NAMESPACE + "#LastUpdated");
         Property locationId = model.getProperty(ONTOLOGY_NAMESPACE + "#position_id");
-        for(Individual ind : indivs){
+        for (Individual ind : indivs) {
             Statement aux = ind.getProperty(lastUpdated);
-            if(aux != null && ind.hasOntClass(ONTOLOGY_NAMESPACE + "#Node"))
-                if(aux.getLong() < maxLastUpdated){
+            if (aux != null && ind.hasOntClass(ONTOLOGY_NAMESPACE + "#Node"))
+                if (aux.getLong() < maxLastUpdated) {
                     maxLastUpdated = aux.getLong();
                     try {
                         positinId = ind.getProperty(locationId).getInt();
-                    }
-                    catch (Exception e){
+                    } catch (Exception e) {
                         System.out.print(e);
                     }
 

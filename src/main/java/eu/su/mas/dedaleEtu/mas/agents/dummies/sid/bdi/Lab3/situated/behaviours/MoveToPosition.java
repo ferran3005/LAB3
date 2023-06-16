@@ -66,5 +66,6 @@ public class MoveToPosition extends  OneShotBehaviour{
         msg.setPerformative(ACLMessage.FAILURE);
         msg.setProtocol(MOVEMENT_PROTOCOL);
         myAgent.send(msg);
+        ((SituatedAgent)this.myAgent).currentState = States.OBSERVATIONS_SENT;
     }
 }
