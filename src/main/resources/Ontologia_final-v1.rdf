@@ -141,20 +141,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#AdjacentToTank -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#AdjacentToTank">
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_adjacent_to"/>
-                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#HasTank"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
-    </owl:Class>
-    
-
-
     <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Agent -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Agent"/>
@@ -172,17 +158,6 @@
     <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#DeployCollector -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#DeployCollector">
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#is_in"/>
-                        <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#AdjacentToTank"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Collector"/>
     </owl:Class>
     
@@ -217,20 +192,6 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Golem">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#MapAgent"/>
-    </owl:Class>
-    
-
-
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#HasTank -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#HasTank">
-        <owl:equivalentClass>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#has_agent"/>
-                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Tanker"/>
-            </owl:Restriction>
-        </owl:equivalentClass>
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Node"/>
     </owl:Class>
     
 
