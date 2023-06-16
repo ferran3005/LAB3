@@ -1,15 +1,16 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.Handlers;
 
+import eu.su.mas.dedale.env.EntityType;
 import eu.su.mas.dedale.env.Location;
+import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.SituatedData;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
 import jade.core.AID;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.impl.OntModelImpl;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
 
 import java.time.Instant;
 import java.util.List;
@@ -60,32 +61,81 @@ public class CollectorRouteHandler implements RouteHandler {
         if(route.isEmpty()){
             if(!allExplored)
                 isMapExplored(model);
+            double gold = 2;
+            double diamond = 2;
+            double param = 0.5;
 
-            double gold = situatedData.getBackPackCapacityGold()/ situatedData.getMaxCapGold();
-            double diamond = situatedData.getBackPackCapacityDiamond()/ situatedData.getMaxCapDiam();
-            if(gold > 50 || diamond > 50) // tanker
-                fase1(model, situatedAgent.getLocalName());
-            else    // recurso
-                fase2(model, situatedAgent.getLocalName());
+            if(situatedData.getMaxCapGold() != 0)
+                gold = situatedData.getBackPackCapacityGold() / situatedData.getMaxCapGold();
+            if(situatedData.getMaxCapDiam() != 0)
+                diamond = situatedData.getBackPackCapacityDiamond() / situatedData.getMaxCapDiam();
+
+            if(gold == 2) //Diamante
+                if(diamond < param)
+                    faseTanker(model, situatedAgent.getLocalName());
+                else
+                    faseRecurso(model, situatedAgent.getLocalName(), "Diamond", null);
+            else if(diamond == 2) // Oro
+                if(gold < param)
+                    faseTanker(model, situatedAgent.getLocalName());
+                else
+                    faseRecurso(model, situatedAgent.getLocalName(), "Gold", null);
+            else{   //Los 2
+                if(gold < param && diamond < param)
+                    faseTanker(model, situatedAgent.getLocalName());
+                else if(gold < param)
+                    faseRecurso(model, situatedAgent.getLocalName(), "Diamond", null);
+                else if(diamond < param)
+                    faseRecurso(model, situatedAgent.getLocalName(), "Gold", null);
+                else
+                    faseRecurso(model, situatedAgent.getLocalName(), "Gold", "Diamond");
+            }
+
             if(route.isEmpty()) updateStack(model, "",situatedAgent.getLocalName());
         }
 
         return route.peek().getLocationId();
     }
 
-    private void fase1(Model model, String situatedAgentName){
+    private void faseTanker(Model model, String situatedAgentName){
         //TODO que busque tanker
+        OntologyManager.addAgent("TANK", "Tanker", model);
+        OntologyManager.addCurrentPosition("TANK", "87", model);
 
-        route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) -> !model.getProperty(
-                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
-                model.getProperty(ONTOLOGY_NAMESPACE + "#visited")).getBoolean()
+        route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
+                {
+                    StmtIterator it =  model.listStatements(
+                            null,
+                            model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
+                            model.getResource(ONTOLOGY_NAMESPACE + "#Tanker")
+                    );
+
+                    //Resource res = model.getResource(ONTOLOGY_NAMESPACE + "#Tanker");
+
+                    while (it.hasNext()){
+                        Statement st = it.next();
+                        Resource res = st.getSubject();
+                        return model.listStatements(
+                                res,
+                                model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
+                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current)).toList().isEmpty();
+                    }
+
+                    return false;
+                }
         );
 
     }
 
-    private void fase2(Model model, String situatedAgentName){
+    private void faseRecurso(Model model, String situatedAgentName, String recurso1, String recurso2){
         //TODO que busque tesoro de su tipo
 
+        if(recurso2 != null){
+
+        }
+        else {
+
+        }
        /*
 
         route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->

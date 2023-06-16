@@ -7,9 +7,8 @@ import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.Situat
 import jade.core.AID;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.impl.OntModelImpl;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
 
 import java.time.Instant;
 import java.util.List;
@@ -116,6 +115,7 @@ public class ExplorerRouteHandler implements RouteHandler {
                 }
         );
     }
+
 
 
 }
