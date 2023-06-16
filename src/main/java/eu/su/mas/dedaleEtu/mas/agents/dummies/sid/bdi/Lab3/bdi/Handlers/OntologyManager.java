@@ -113,13 +113,6 @@ public class OntologyManager {
         updateAgentLastSeen(situatedAgentName, model);
     }
 
-    public static void addEdge(Model model, String locationID) {
-        model.add(new StatementImpl(
-                model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationID), //dominio
-                model.getProperty(ONTOLOGY_NAMESPACE + "#isEdge"),   //nombre propiedad
-                model.createTypedLiteral(true))
-        );
-    }
 
     public static void addVisited(Model model, String locationID) {
         Statement visited = model.getProperty(
