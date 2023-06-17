@@ -126,15 +126,34 @@ public class CollectorRouteHandler implements RouteHandler {
     private void faseRecurso(Model model, String situatedAgentName, String recurso1, String recurso2){
         //TODO que busque tesoro de su tipo
 
-        route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
-                        false
-        );
-
         if(recurso2 != null){
-
-        }
-        else {
-
+            route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
+                    {
+                        StmtIterator it =  model.listStatements(
+                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+                                model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+                                (RDFNode) null);
+                        while (it.hasNext()){
+                            Statement st = it.next();
+                            Resource res = st.getObject().asResource();
+                            Boolean isGold, isDiamond;
+                            isGold = res.getURI().contains("Gold");
+                            isDiamond = res.getURI().contains("Diamond");
+                            return isGold || isDiamond;
+                        }
+                        return false;
+                    }
+            );
+        } else {
+            route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
+                    {
+                        StmtIterator it =  model.listStatements(
+                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current),
+                                model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
+                                model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + current + "-" + "Content_" + recurso1));
+                        return it.hasNext();
+                    }
+            );
         }
        /*
 
