@@ -27,7 +27,7 @@ public class WaitBeforeListeningForOntologies extends Behaviour {
 
     @Override
     public int onEnd() {
-        ((SituatedAgent)myAgent).listenToOntology = true;
+        ((SituatedAgent)myAgent).checkNearbyAgents = true;
         return 0;
     }
 }

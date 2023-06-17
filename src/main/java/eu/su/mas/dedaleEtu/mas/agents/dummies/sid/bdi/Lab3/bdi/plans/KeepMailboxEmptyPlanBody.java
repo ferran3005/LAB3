@@ -95,6 +95,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
     @Parameter(direction = Parameter.Direction.IN)
     public void setMessage(ACLMessage msgReceived) {
+
         message = msgReceived;
     }
 

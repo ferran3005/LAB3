@@ -2,7 +2,6 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent;
 
 import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.EntityCharacteristics;
-import eu.su.mas.dedale.env.Observation;
 import eu.su.mas.dedale.env.mapElements.LockElement;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
@@ -14,12 +13,11 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class SituatedAgent extends AbstractDedaleAgent {
     public AID bdiAgent;
-    public Boolean listenToOntology = true;
+    public Boolean checkNearbyAgents = true;
     public String agentType;
     public States currentState = States.NO_UPDATES_SENT;
     public SituatedData data;

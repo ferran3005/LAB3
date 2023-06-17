@@ -59,8 +59,23 @@ public class MoveToPosition extends  OneShotBehaviour{
     }
 
     public void tryToCollect(){
-        boolean unlock = ((AbstractDedaleAgent) this.myAgent).openLock(((AbstractDedaleAgent) this.myAgent).getMyTreasureType());
-        if(unlock) ((AbstractDedaleAgent) this.myAgent).pick();
+        List<Couple<Observation, Integer>> observations = ((AbstractDedaleAgent) this.myAgent).observe().get(0).getRight();
+        if(observations.stream().anyMatch(obs -> isMyTreasureType(obs.getLeft()))){
+            Observation type = ((AbstractDedaleAgent) this.myAgent).getMyTreasureType();
+            boolean unlock = ((AbstractDedaleAgent) this.myAgent).openLock(type);
+            if(unlock) ((AbstractDedaleAgent) this.myAgent).pick();
+        }
+    }
+
+    public Boolean isMyTreasureType(Observation observation){
+        Observation type = ((AbstractDedaleAgent) this.myAgent).getMyTreasureType();
+        if(observation.equals(type)) return true;
+        else {
+            if(type.equals(Observation.ANY_TREASURE)) {
+                return (observation.equals(Observation.GOLD) || observation.equals(Observation.DIAMOND));
+            }
+            return false;
+        }
     }
 
     public void failMove(){

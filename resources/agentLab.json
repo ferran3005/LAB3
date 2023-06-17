@@ -25,7 +25,17 @@
     "communicationRange": 3,
     "initialLocation": "free",
     "backPackCapacityGold": 20,
-    "backPackCapacityDiamond":0,
+    "backPackCapacityDiamond":20,
+    "detectionRadius": 0,
+    "strengthExpertise": 10,
+    "lockPickingExpertise":10
+  },
+  {"agentType":"agentTanker",
+    "agentName": "Tank",
+    "communicationRange": 3,
+    "initialLocation": "free",
+    "backPackCapacityGold": 1000,
+    "backPackCapacityDiamond":1000,
     "detectionRadius": 0,
     "strengthExpertise": 10,
     "lockPickingExpertise":10

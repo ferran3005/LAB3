@@ -61,31 +61,31 @@ public class CollectorRouteHandler implements RouteHandler {
         if(route.isEmpty()){
             if(!allExplored)
                 isMapExplored(model);
-            double gold = 2;
-            double diamond = 2;
-            double param = 0.5;
+            double gold = -1;
+            double diamond = -1;
+            double threshold = 0.8;
 
-            if(situatedData.getMaxCapGold() != 0)
+            if(situatedData.getMaxCapGold() > 0)
                 gold = situatedData.getBackPackCapacityGold() / situatedData.getMaxCapGold();
-            if(situatedData.getMaxCapDiam() != 0)
+            if(situatedData.getMaxCapDiam() > 0)
                 diamond = situatedData.getBackPackCapacityDiamond() / situatedData.getMaxCapDiam();
 
-            if(gold == 2) //Diamante
-                if(diamond < param)
+            if(gold == -1) //Diamante
+                if(diamond < threshold)
                     faseTanker(model, situatedAgent.getLocalName());
                 else
                     faseRecurso(model, situatedAgent.getLocalName(), "Diamond", null);
-            else if(diamond == 2) // Oro
-                if(gold < param)
+            else if(diamond == -1) // Oro
+                if(gold < threshold)
                     faseTanker(model, situatedAgent.getLocalName());
                 else
                     faseRecurso(model, situatedAgent.getLocalName(), "Gold", null);
             else{   //Los 2
-                if(gold < param && diamond < param)
+                if(gold < threshold && diamond < threshold)
                     faseTanker(model, situatedAgent.getLocalName());
-                else if(gold < param)
+                else if(gold < threshold)
                     faseRecurso(model, situatedAgent.getLocalName(), "Diamond", null);
-                else if(diamond < param)
+                else if(diamond < threshold)
                     faseRecurso(model, situatedAgent.getLocalName(), "Gold", null);
                 else
                     faseRecurso(model, situatedAgent.getLocalName(), "Gold", "Diamond");
@@ -129,6 +129,10 @@ public class CollectorRouteHandler implements RouteHandler {
 
     private void faseRecurso(Model model, String situatedAgentName, String recurso1, String recurso2){
         //TODO que busque tesoro de su tipo
+
+        route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
+                        false
+        );
 
         if(recurso2 != null){
 
