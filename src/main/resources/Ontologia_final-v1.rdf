@@ -223,14 +223,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Stench -->
-
-    <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Stench">
-        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Observation"/>
-    </owl:Class>
-    
-
-
     <!-- http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Strength -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/usuari/ontologies/P2_ontologia#Strength">

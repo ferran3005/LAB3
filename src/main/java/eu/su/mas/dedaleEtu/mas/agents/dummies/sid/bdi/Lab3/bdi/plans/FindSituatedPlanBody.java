@@ -42,7 +42,7 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
                 ServiceDescription sd = (ServiceDescription) dfd.getAllServices().next();
                 System.out.println("Found situated! " + provider.getName());
                 String type = sd.getType();
-                if(type.equals(EntityType.AGENT_EXPLORER.getName())) {
+                if(type.equals(EntityType.AGENT_EXPLORER.getName()) || type.equals(EntityType.AGENT_TANKER.getName())) {
                     ((BDIAgent) this.myAgent).routeHandler = new ExplorerRouteHandler();
                 }
                 else if(type.equals(EntityType.AGENT_COLLECTOR.getName())) {

@@ -203,7 +203,7 @@ public class Principal {
                 newAgent("Lab", new String[] {"situated-agent06-explo1", "bdi06-explo1"}, SituatedAgent.class),
                 newAgent("Lab2", new String[] {"situated-agent06-explo2", "bdi06-explo2"}, SituatedAgent.class),
                 newAgent("Lab3", new String[] {"situated-agent06-collect1", "bdi06-collect1"}, SituatedAgent.class),
-                newAgent("Tank", new String[] {"situated-agent06-tank1"}, DummyTankerAgent.class),
+                newAgent("Tank", new String[] {"situated-agent06-tank1", "bdi06-tank1"}, SituatedAgent.class),
 
                 //newDummyMovingAgent("ImHere"),
                 //newGolem("Golem1"),
@@ -234,9 +234,13 @@ public class Principal {
                 AgentController nonDedaleAgent3 =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
                             "BDI3", BDIAgent.class.getName(), new Object[] {"situated-agent06-collect1", "bdi06-collect1"});
+            AgentController nonDedaleAgent4 =
+                    containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
+                            "BDI4", BDIAgent.class.getName(), new Object[] {"situated-agent06-tank1", "bdi06-tank1"});
             agentList.add(nonDedaleAgent);
             agentList.add(nonDedaleAgent2);
             agentList.add(nonDedaleAgent3);
+            agentList.add(nonDedaleAgent4);
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }

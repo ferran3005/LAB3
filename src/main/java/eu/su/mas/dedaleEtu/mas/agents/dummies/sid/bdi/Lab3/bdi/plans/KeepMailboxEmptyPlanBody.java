@@ -132,12 +132,13 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 List<Couple<Observation, Integer>> locationObs =  obs.getRight();
                 for (Couple<Observation, Integer> observation : locationObs) {
 
-
-                    OntologyManager.addObservation(
-                            obs.getLeft().getLocationId(),
-                            observation.getLeft(),
-                            (observation.getRight() != null) ? observation.getRight() : 0,
-                            model);
+                    if(observation.getLeft() != Observation.STENCH) { //TODO: no usamos stench, y genera MUCHA basura en memoria
+                        OntologyManager.addObservation(
+                                obs.getLeft().getLocationId(),
+                                observation.getLeft(),
+                                (observation.getRight() != null) ? observation.getRight() : 0,
+                                model);
+                    }
                 }
             }
         }
