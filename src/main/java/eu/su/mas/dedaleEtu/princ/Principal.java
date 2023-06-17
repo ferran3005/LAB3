@@ -3,8 +3,6 @@ package eu.su.mas.dedaleEtu.princ;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agents.GateKeeperAgent;
 import eu.su.mas.dedale.mas.agents.dedaleDummyAgents.DummyWumpusShift;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.*;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.explo.ExploreCoopAgent;
 import eu.su.mas.dedaleEtu.sid.grupo06.BDIAgent06;
 import eu.su.mas.dedaleEtu.sid.grupo06.SituatedAgent06;
 import jade.core.Profile;
@@ -275,27 +273,8 @@ public class Principal {
         return newAgent(agentName, entityParameters, agentClass, ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS);
     }
 
-    private AgentController newTankerAgent(String agentName) {
-        return newAgent(agentName, new Object[] {"My parameters"}, DummyTankerAgent.class);
-    }
 
-    private AgentController newCollectorAgent(String agentName) {
-        return newAgent(agentName, new Object[] {"My parameters"}, DummyCollectorAgent.class);
-    }
 
-    private AgentController newExploreSoloAgent(String agentName) {
-        return newAgent(agentName, new Object[] {"My parameters"}, ExploreSoloAgent.class);
-    }
-
-    private AgentController newDummyMovingAgent(String agentName) {
-        return newAgent(agentName, new Object[] {"My parameters"}, DummyMovingAgent.class);
-    }
-
-    private AgentController newExploreCoopAgent(String agentName, String[] agentNamesToShare) {
-        // agentNamesToShare is a list of agent names
-        // this agent will share its internal exploration map with
-        return newAgent(agentName, agentNamesToShare, ExploreCoopAgent.class);
-    }
 
     private AgentController newGolem(String agentName) {
         return newAgent(agentName, new Object[] {"My parameters"}, DummyWumpusShift.class);
