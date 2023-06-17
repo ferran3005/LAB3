@@ -107,8 +107,6 @@ public class CollectorRouteHandler implements RouteHandler {
                             model.getResource(ONTOLOGY_NAMESPACE + "#Tanker")
                     );
 
-                    //Resource res = model.getResource(ONTOLOGY_NAMESPACE + "#Tanker");
-
                     while (it.hasNext()){
                         Statement st = it.next();
                         Resource res = st.getSubject();

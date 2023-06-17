@@ -158,7 +158,9 @@ public class OntologyManager {
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId)
                 );
 
-        agentsInLocation.hasNext() ? agentsInLocation.next().remove() : null
+        if(agentsInLocation.hasNext()) {
+            agentsInLocation.next().remove();
+        }
 
         model.add(new StatementImpl(
                 model.getResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),

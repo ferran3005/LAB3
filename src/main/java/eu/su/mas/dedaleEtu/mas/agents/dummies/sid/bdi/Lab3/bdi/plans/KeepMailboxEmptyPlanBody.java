@@ -184,6 +184,7 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
 
             ((BDIAgent) getCapability().getMyAgent()).situatedData.setBackPackCapacityDiamond(mov.backpackFreeSpaceDiamate);
             ((BDIAgent) getCapability().getMyAgent()).situatedData.setBackPackCapacityGold(mov.backpackFreeSpaceOro);
+            ((BDIAgent) getCapability().getMyAgent()).situatedData.setTreasureType(mov.treasureType); //treasure type se asigna a lo primero que recogen
 
             String situatedAgentName = ((BDIAgent) getCapability().getMyAgent()).situatedData.getSituatedAgent().getLocalName();
             OntologyManager.addCurrentPosition(situatedAgentName, currentPosition, model);

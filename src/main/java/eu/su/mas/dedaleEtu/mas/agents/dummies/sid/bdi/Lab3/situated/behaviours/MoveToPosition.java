@@ -49,7 +49,9 @@ public class MoveToPosition extends  OneShotBehaviour{
             if(f.getLeft().equals(Observation.DIAMOND))diamondCap = f.getRight();
             else goldCap = f.getRight();
         }
-       MovementData movData =  new  MovementData(diamondCap, goldCap);
+
+        MovementData movData =  new  MovementData(diamondCap, goldCap, ((AbstractDedaleAgent) this.myAgent)
+                .getMyTreasureType());
 
         msg.setPerformative(ACLMessage.INFORM);
         msg.setProtocol(MOVEMENT_PROTOCOL);
