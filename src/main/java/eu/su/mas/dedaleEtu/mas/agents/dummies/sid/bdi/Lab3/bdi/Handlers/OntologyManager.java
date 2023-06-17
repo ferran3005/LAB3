@@ -15,6 +15,7 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 
 import java.time.Instant;
@@ -150,6 +151,14 @@ public class OntologyManager {
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + currentPosition)
             ));
         }
+
+        StmtIterator agentsInLocation = model.listStatements(
+                null,
+                model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId)
+                );
+
+        agentsInLocation.hasNext() ? agentsInLocation.next().remove() : null
 
         model.add(new StatementImpl(
                 model.getResource(ONTOLOGY_NAMESPACE + "#" + situatedAgentName),

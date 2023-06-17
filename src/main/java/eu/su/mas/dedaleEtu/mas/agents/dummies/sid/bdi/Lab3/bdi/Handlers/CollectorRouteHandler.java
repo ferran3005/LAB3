@@ -98,9 +98,6 @@ public class CollectorRouteHandler implements RouteHandler {
     }
 
     private void faseTanker(Model model, String situatedAgentName){
-        //TODO que busque tanker
-        OntologyManager.addAgent("TANK", "Tanker", model);
-        OntologyManager.addCurrentPosition("TANK", "87", model);
 
         route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
                 {
@@ -115,16 +112,17 @@ public class CollectorRouteHandler implements RouteHandler {
                     while (it.hasNext()){
                         Statement st = it.next();
                         Resource res = st.getSubject();
-                        return model.listStatements(
-                                res,
+                        if(!model.listStatements(
+                                res.asResource(),
                                 model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
-                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current)).toList().isEmpty();
+                                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + current)).toList().isEmpty()) {
+                            return true;
+                        }
                     }
 
                     return false;
                 }
         );
-
     }
 
     private void faseRecurso(Model model, String situatedAgentName, String recurso1, String recurso2){
