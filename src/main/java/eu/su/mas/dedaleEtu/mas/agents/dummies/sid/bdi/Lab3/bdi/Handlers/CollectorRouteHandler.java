@@ -92,6 +92,7 @@ public class CollectorRouteHandler implements RouteHandler {
             }
 
             if(route.isEmpty()) updateStack(model, "",situatedAgent.getLocalName());
+            if(route.isEmpty()) computeRandomPath(model, situatedAgent, situatedData);
         }
 
         return route.peek().getLocationId();

@@ -44,7 +44,6 @@ public class BDIAgent extends SingleCapabilityAgent {
     public RouteHandler routeHandler;
     public AID situatedAgent;
     public SituatedData situatedData;
-    public List<Couple<ACLMessage, Direction>> log = new ArrayList<>();
 
     public BDIAgent() {
         // Create initial beliefs

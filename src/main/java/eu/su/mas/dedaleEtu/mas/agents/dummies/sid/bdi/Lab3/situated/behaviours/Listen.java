@@ -1,14 +1,27 @@
 package eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.behaviours;
 
+import dataStructures.tuple.Couple;
 import eu.su.mas.dedale.env.EntityType;
+import eu.su.mas.dedale.env.Observation;
+import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.States;
+import jade.core.AID;
 import jade.core.behaviours.Behaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.DATA_PROTOCOL;
 import static eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.common.Constants.MOVEMENT_PROTOCOL;
@@ -39,7 +52,29 @@ public class Listen extends Behaviour {
             } else {
                 if (((SituatedAgent) myAgent).checkNearbyAgents) {
                     if (((SituatedAgent) this.myAgent).data.getAgentType().equals(EntityType.AGENT_COLLECTOR.getName())) {
-                        tryToLeave(msg.getSender().getLocalName());
+
+                        String sender = msg.getSender().getLocalName();
+                        boolean isKnown = ((SituatedAgent) myAgent).allAgents.contains(sender);
+                        if (!isKnown) {
+                            updateFromDF();
+                        }
+
+                        int diamondCap = 0;
+                        int goldCap = 0;
+                        int diamondMaxCap = ((SituatedAgent)myAgent).data.maxCapDiam;
+                        int goldMaxCap = ((SituatedAgent)myAgent).data.maxCapGold;
+                        for(Couple<Observation, Integer> f : ((AbstractDedaleAgent) this.myAgent).getBackPackFreeSpace()){
+                            if(f.getLeft().equals(Observation.DIAMOND))diamondCap = f.getRight();
+                            else goldCap = f.getRight();
+                        }
+
+                        if(diamondCap < diamondMaxCap || goldCap < goldMaxCap){
+                            boolean isTanker = ((SituatedAgent) myAgent).tankers.contains(sender);
+                            if (isTanker) {
+                                tryToDeposit(msg.getSender().getLocalName());
+                            }
+                        }
+
                     }
 
                     if (Objects.equals(msg.getProtocol(), SHOUT_ONTOLOGY_PROTOCOL_OUT)) {
@@ -55,6 +90,35 @@ public class Listen extends Behaviour {
 
     }
 
+    private void updateFromDF() {
+        DFAgentDescription templateExplo = new DFAgentDescription();
+        DFAgentDescription templateCollect = new DFAgentDescription();
+        DFAgentDescription templateTank = new DFAgentDescription();
+
+        // Create ServiceDescription objects for each service type
+        ServiceDescription serviceExplo = new ServiceDescription();
+        serviceExplo.setType(EntityType.AGENT_EXPLORER.getName());
+        ServiceDescription serviceCollect = new ServiceDescription();
+        serviceCollect.setType(EntityType.AGENT_COLLECTOR.getName());
+        ServiceDescription serviceTanker = new ServiceDescription();
+        serviceTanker.setType(EntityType.AGENT_TANKER.getName());
+
+        templateExplo.addServices(serviceExplo);
+        templateCollect.addServices(serviceCollect);
+        templateTank.addServices(serviceTanker);
+
+        try { //TODO: LO ODIO LO ODIO LO ODIO
+            List<AID> resultsExplo = Arrays.stream(DFService.search(this.myAgent, templateExplo)).map(DFAgentDescription::getName).collect(Collectors.toList());
+            List<AID> resultsCollect = Arrays.stream(DFService.search(this.myAgent, templateCollect)).map(DFAgentDescription::getName).collect(Collectors.toList());
+            List<AID> resultsTank = Arrays.stream(DFService.search(this.myAgent, templateTank)).map(DFAgentDescription::getName).collect(Collectors.toList());
+
+            ((SituatedAgent) myAgent).tankers = resultsTank.stream().map(AID::getLocalName).collect(Collectors.toList());
+            ((SituatedAgent) myAgent).allAgents = Stream.concat(Stream.concat(resultsExplo.stream(), resultsCollect.stream()) , resultsTank.stream()).map(AID::getLocalName).collect(Collectors.toList());
+        } catch (FIPAException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void action() {
         listen();
@@ -65,7 +129,7 @@ public class Listen extends Behaviour {
         return false;
     }
 
-    public void tryToLeave(String sender) {
+    public void tryToDeposit(String sender) {
         ExecutorService executor = Executors.newCachedThreadPool();
         Callable<Object> task = new Callable<Object>() {
             public Object call() {

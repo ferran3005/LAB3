@@ -59,7 +59,8 @@ public class ExplorerRouteHandler implements RouteHandler {
         if (!allExplored) isMapExplored(model);
         if (route.isEmpty()) {
             String fase = !allExplored ? "fase1" : "fase2";
-            updateStack(model, fase, situatedAgent.getLocalName());
+            boolean stackFilled = updateStack(model, fase, situatedAgent.getLocalName());
+            if(!stackFilled) return computeRandomPath(model, situatedAgent, situatedData);
         }
 
         return route.peek().getLocationId();

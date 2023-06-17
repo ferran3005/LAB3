@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SituatedAgent extends AbstractDedaleAgent {
+
+    public List<String> allAgents = new ArrayList<>();
+    public List<String> tankers = new ArrayList<>();
     public AID bdiAgent;
     public Boolean checkNearbyAgents = true;
     public String agentType;
@@ -31,7 +34,6 @@ public class SituatedAgent extends AbstractDedaleAgent {
         String name = (String) args[2];
         String bdiName = (String) args[3];
 
-        entity.getExpertise();
         int lock = 0;
         int strength= 0;
         for (Couple<LockElement.LockType, Integer> a : entity.getExpertise()) {

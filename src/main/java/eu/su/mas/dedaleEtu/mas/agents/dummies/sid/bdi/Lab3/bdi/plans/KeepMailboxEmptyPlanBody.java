@@ -71,7 +71,6 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 handleDataResponses(message);
             }
             setEndState(Plan.EndState.SUCCESSFUL);
-            ((BDIAgent) getCapability().getMyAgent()).log.add(new Couple<>(message, Direction.IN));
         }
     }
 

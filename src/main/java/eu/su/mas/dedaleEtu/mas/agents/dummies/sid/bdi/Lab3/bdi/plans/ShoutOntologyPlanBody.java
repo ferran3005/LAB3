@@ -41,8 +41,6 @@ public class ShoutOntologyPlanBody extends BeliefGoalPlanBody {
         request.setContent(ontologyJson);
         this.myAgent.send(request);
 
-        ((BDIAgent) this.myAgent).log.add(new Couple<>(request, Direction.OUT));
-
         Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.SHOUT_ONTOLOGY_REQUEST_SENT);
         getCapability().getBeliefBase().addOrUpdateBelief(agentState);
         setEndState(Plan.EndState.SUCCESSFUL);

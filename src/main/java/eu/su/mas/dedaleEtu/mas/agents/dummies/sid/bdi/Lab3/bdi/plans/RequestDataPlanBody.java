@@ -23,9 +23,6 @@ public class RequestDataPlanBody extends BeliefGoalPlanBody {
         request.setSender(this.myAgent.getAID());
         this.myAgent.send(request);
 
-
-        ((BDIAgent) this.myAgent).log.add(new Couple<>(request, Direction.OUT));
-
         Belief agentState = new TransientBelief(AGENT_STATE, BdiStates.DATA_REQUEST_SENT);
         getCapability().getBeliefBase().addOrUpdateBelief(agentState);
         setEndState(Plan.EndState.SUCCESSFUL);
