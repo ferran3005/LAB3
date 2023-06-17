@@ -268,9 +268,14 @@ public class OntologyManager {
                     model.getProperty(ONTOLOGY_NAMESPACE + "#hasObservation"),
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location_" + locationId + "-" + "Content_" + observation)
             ));
-            updateLocationLastSeen(locationId, model);
-        }
 
+        } else {
+            observationInd.setPropertyValue(
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#value"),
+                    model.createTypedLiteral(value)
+            );
+        }
+        updateLocationLastSeen(locationId, model);
     }
 
 
@@ -304,5 +309,38 @@ public class OntologyManager {
                     }
                 }
         );
+    }
+
+    public static void removeResources(String locationId, Model model) {
+        Individual goldInd = ((OntModel) model).getIndividual(
+                ONTOLOGY_NAMESPACE + "#" +
+                        "Location_" + locationId + "-" +
+                        "Content_" + "Gold");
+
+        Individual diamondInd = ((OntModel) model).getIndividual(
+                ONTOLOGY_NAMESPACE + "#" +
+                        "Location_" + locationId + "-" +
+                        "Content_" + "Diamond");
+
+        if(goldInd != null || diamondInd != null){
+            if(goldInd != null){
+                goldInd.remove();
+            }
+            if(diamondInd != null){
+                diamondInd.remove();
+            }
+            ((OntModel) model).getIndividual(
+                    ONTOLOGY_NAMESPACE + "#" +
+                            "Location_" + locationId + "-" +
+                            "Content_" + "LockPicking").remove();
+            ((OntModel) model).getIndividual(
+                    ONTOLOGY_NAMESPACE + "#" +
+                            "Location_" + locationId + "-" +
+                            "Content_" + "Strength").remove();
+            ((OntModel) model).getIndividual(
+                    ONTOLOGY_NAMESPACE + "#" +
+                            "Location_" + locationId + "-" +
+                            "Content_" + "LockIsOpen").remove();
+        }
     }
 }

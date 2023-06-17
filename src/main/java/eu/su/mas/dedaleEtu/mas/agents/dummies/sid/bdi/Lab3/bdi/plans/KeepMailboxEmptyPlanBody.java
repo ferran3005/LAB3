@@ -117,6 +117,9 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 situatedAgentName,
                 originLocationId,
                 model);
+        if(noResource(observations.get(0).getRight())) {
+            OntologyManager.removeResources(originLocationId, model);
+        }
 
         Boolean actualWind = observations.get(0).getRight().stream().anyMatch(o -> o.getLeft() == Observation.WIND);
         for (Couple<Location, List<Couple<Observation, Integer>>> obs : observations) {
@@ -127,7 +130,8 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                         obs.getLeft().getLocationId(),
                         model); //añadimos la posición adyacente
 
-                for (Couple<Observation, Integer> observation : obs.getRight()) {
+                List<Couple<Observation, Integer>> locationObs =  obs.getRight();
+                for (Couple<Observation, Integer> observation : locationObs) {
 
 
                     OntologyManager.addObservation(
@@ -138,6 +142,10 @@ public class KeepMailboxEmptyPlanBody extends AbstractPlanBody {  //TODO: MUCHO 
                 }
             }
         }
+    }
+
+    private boolean noResource(List<Couple<Observation, Integer>> locationObs) {
+        return locationObs.stream().noneMatch(o -> o.getLeft() == Observation.GOLD || o.getLeft() == Observation.DIAMOND);
     }
 
     private void handleShoutOntologyResponses(ACLMessage message) {
