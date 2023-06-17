@@ -5,8 +5,8 @@ import eu.su.mas.dedale.mas.agents.GateKeeperAgent;
 import eu.su.mas.dedale.mas.agents.dedaleDummyAgents.DummyWumpusShift;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.*;
 import eu.su.mas.dedaleEtu.mas.agents.dummies.explo.ExploreCoopAgent;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.bdi.agent.BDIAgent;
-import eu.su.mas.dedaleEtu.mas.agents.dummies.sid.bdi.Lab3.situated.agent.SituatedAgent;
+import eu.su.mas.dedaleEtu.sid.grupo06.BDIAgent06;
+import eu.su.mas.dedaleEtu.sid.grupo06.SituatedAgent06;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -200,10 +200,10 @@ public class Principal {
         // The platform will not work unless all agents defined in the entities file are bound by name
         // to agents in this list.
         AgentController[] agentsToAdd = new AgentController[]{
-                newAgent("Lab", new String[] {"situated-agent06-explo1", "bdi06-explo1"}, SituatedAgent.class),
-                newAgent("Lab2", new String[] {"situated-agent06-explo2", "bdi06-explo2"}, SituatedAgent.class),
-                newAgent("Lab3", new String[] {"situated-agent06-collect1", "bdi06-collect1"}, SituatedAgent.class),
-                newAgent("Tank", new String[] {"situated-agent06-tank1", "bdi06-tank1"}, SituatedAgent.class),
+                newAgent("Lab", new String[] {"situated-agent06-explo1", "bdi06-explo1"}, SituatedAgent06.class),
+                newAgent("Lab2", new String[] {"situated-agent06-explo2", "bdi06-explo2"}, SituatedAgent06.class),
+                newAgent("Lab3", new String[] {"situated-agent06-collect1", "bdi06-collect1"}, SituatedAgent06.class),
+                newAgent("Tank", new String[] {"situated-agent06-tank1", "bdi06-tank1"}, SituatedAgent06.class),
 
                 //newDummyMovingAgent("ImHere"),
                 //newGolem("Golem1"),
@@ -227,16 +227,16 @@ public class Principal {
         try {
             AgentController nonDedaleAgent =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
-                            "BDI1", BDIAgent.class.getName(), new Object[] {"situated-agent06-explo1", "bdi06-explo1"});
+                            "BDI1", BDIAgent06.class.getName(), new Object[] {"situated-agent06-explo1", "bdi06-explo1"});
                 AgentController nonDedaleAgent2 =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
-                            "BDI2", BDIAgent.class.getName(), new Object[] {"situated-agent06-explo2", "bdi06-explo2"});
+                            "BDI2", BDIAgent06.class.getName(), new Object[] {"situated-agent06-explo2", "bdi06-explo2"});
                 AgentController nonDedaleAgent3 =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
-                            "BDI3", BDIAgent.class.getName(), new Object[] {"situated-agent06-collect1", "bdi06-collect1"});
+                            "BDI3", BDIAgent06.class.getName(), new Object[] {"situated-agent06-collect1", "bdi06-collect1"});
             AgentController nonDedaleAgent4 =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
-                            "BDI4", BDIAgent.class.getName(), new Object[] {"situated-agent06-tank1", "bdi06-tank1"});
+                            "BDI4", BDIAgent06.class.getName(), new Object[] {"situated-agent06-tank1", "bdi06-tank1"});
             agentList.add(nonDedaleAgent);
             agentList.add(nonDedaleAgent2);
             agentList.add(nonDedaleAgent3);
