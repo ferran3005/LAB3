@@ -120,7 +120,7 @@ public class OntologyManager {
                 model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationID), //dominio
                 model.getProperty(ONTOLOGY_NAMESPACE + "#visited")  //nombre propiedad
         );
-        if(visited != null) visited.changeLiteralObject(true);
+        if (visited != null) visited.changeLiteralObject(true);
         else {
             model.add(new StatementImpl(
                     model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + locationID), //dominio
@@ -156,9 +156,9 @@ public class OntologyManager {
                 null,
                 model.getProperty(ONTOLOGY_NAMESPACE + "#is_in"),
                 model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + locationId)
-                );
+        );
 
-        if(agentsInLocation.hasNext()) {
+        if (agentsInLocation.hasNext()) {
             agentsInLocation.next().remove();
         }
 
@@ -204,19 +204,24 @@ public class OntologyManager {
                     model.createTypedLiteral(Integer.valueOf(adjacentNode))));
 
             model.add(new StatementImpl(
-                            model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode), //dominio
-                            model.getProperty(ONTOLOGY_NAMESPACE + "#visited"),   //nombre propiedad
-                            model.createTypedLiteral(false))
-                    );
+                    model.createResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode), //dominio
+                    model.getProperty(ONTOLOGY_NAMESPACE + "#visited"),   //nombre propiedad
+                    model.createTypedLiteral(false))
+            );
+        }
+        boolean adjacencyExists = model.contains(
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + originNode),
+                model.getProperty(ONTOLOGY_NAMESPACE + "#is_adjacent_to"),
+                model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode));
 
+        if (!adjacencyExists) {
             model.add(
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + originNode),
                     model.getProperty(ONTOLOGY_NAMESPACE + "#is_adjacent_to"),
                     model.getResource(ONTOLOGY_NAMESPACE + "#Location-" + adjacentNode)
             );
-
-            updateLocationLastSeen(adjacentNode, model);
         }
+        updateLocationLastSeen(adjacentNode, model);
     }
 
     private static void updateLocationLastSeen(String adjacentNode, Model model) {
@@ -333,11 +338,11 @@ public class OntologyManager {
                         "Location_" + locationId + "-" +
                         "Content_" + "Diamond");
 
-        if(goldInd != null || diamondInd != null){
-            if(goldInd != null){
+        if (goldInd != null || diamondInd != null) {
+            if (goldInd != null) {
                 goldInd.remove();
             }
-            if(diamondInd != null){
+            if (diamondInd != null) {
                 diamondInd.remove();
             }
             ((OntModel) model).getIndividual(
