@@ -125,7 +125,6 @@ public class CollectorRouteHandler implements RouteHandler {
     }
 
     private void faseRecurso(Model model, String situatedAgentName, String recurso1, String recurso2){
-        //TODO que busque tesoro de su tipo
 
         if(recurso2 != null){
             route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
@@ -156,15 +155,6 @@ public class CollectorRouteHandler implements RouteHandler {
                     }
             );
         }
-       /*
-
-        route = OntologyManager.shortestPathToTarget(model, situatedAgentName, (current) ->
-                model.getProperty(ONTOLOGY_NAMESPACE + "#Location_" + current + "-" + "Content_" + "DIAMOND"),
-                model.getProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
-                model.getResource(ONTOLOGY_NAMESPACE + "DIAMOND").getBoolean()
-        );
-
-        */
 
     }
     private void fase3(Model model, String situatedAgentName){
