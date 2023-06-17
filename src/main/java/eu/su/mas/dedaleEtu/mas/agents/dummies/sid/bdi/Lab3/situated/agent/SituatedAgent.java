@@ -17,8 +17,8 @@ import java.util.List;
 
 public class SituatedAgent extends AbstractDedaleAgent {
 
-    public List<String> allAgents = new ArrayList<>();
-    public List<String> tankers = new ArrayList<>();
+    public List<AID> allAgents = new ArrayList<>();
+    public List<AID> tankers = new ArrayList<>();
     public AID bdiAgent;
     public Boolean checkNearbyAgents = true;
     public String agentType;

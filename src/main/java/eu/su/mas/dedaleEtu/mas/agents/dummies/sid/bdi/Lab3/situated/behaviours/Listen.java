@@ -50,33 +50,33 @@ public class Listen extends Behaviour {
                     block();
                 }
             } else {
-                if (((SituatedAgent) myAgent).checkNearbyAgents) {
-                    if (((SituatedAgent) this.myAgent).data.getAgentType().equals(EntityType.AGENT_COLLECTOR.getName())) {
 
-                        String sender = msg.getSender().getLocalName();
-                        boolean isKnown = ((SituatedAgent) myAgent).allAgents.contains(sender);
-                        if (!isKnown) {
-                            updateFromDF();
-                        }
+                if (((SituatedAgent) this.myAgent).data.getAgentType().equals(EntityType.AGENT_COLLECTOR.getName())) {
 
-                        int diamondCap = 0;
-                        int goldCap = 0;
-                        int diamondMaxCap = ((SituatedAgent)myAgent).data.maxCapDiam;
-                        int goldMaxCap = ((SituatedAgent)myAgent).data.maxCapGold;
-                        for(Couple<Observation, Integer> f : ((AbstractDedaleAgent) this.myAgent).getBackPackFreeSpace()){
-                            if(f.getLeft().equals(Observation.DIAMOND))diamondCap = f.getRight();
-                            else goldCap = f.getRight();
-                        }
-
-                        if(diamondCap < diamondMaxCap || goldCap < goldMaxCap){
-                            boolean isTanker = ((SituatedAgent) myAgent).tankers.contains(sender);
-                            if (isTanker) {
-                                tryToDeposit(msg.getSender().getLocalName());
-                            }
-                        }
-
+                    String sender = msg.getSender().getLocalName();
+                    boolean isKnown = ((SituatedAgent) myAgent).allAgents.stream().map(AID::getLocalName).collect(Collectors.toList()).contains(sender);
+                    if (!isKnown) {
+                        updateFromDF();
                     }
 
+                    int diamondCap = 0;
+                    int goldCap = 0;
+                    int diamondMaxCap = ((SituatedAgent) myAgent).data.maxCapDiam;
+                    int goldMaxCap = ((SituatedAgent) myAgent).data.maxCapGold;
+                    for (Couple<Observation, Integer> f : ((AbstractDedaleAgent) this.myAgent).getBackPackFreeSpace()) {
+                        if (f.getLeft().equals(Observation.DIAMOND)) diamondCap = f.getRight();
+                        else goldCap = f.getRight();
+                    }
+
+                    if (diamondCap < diamondMaxCap || goldCap < goldMaxCap) {
+                        boolean isTanker = ((SituatedAgent) myAgent).tankers.stream().map(AID::getLocalName).collect(Collectors.toList()).contains(sender);
+                        if (isTanker) {
+                            tryToDeposit(msg.getSender().getLocalName());
+                        }
+                    }
+
+                }
+                if (((SituatedAgent) myAgent).checkNearbyAgents) {
                     if (Objects.equals(msg.getProtocol(), SHOUT_ONTOLOGY_PROTOCOL_OUT)) {
                         ((SituatedAgent) myAgent).checkNearbyAgents = false;
                         this.myAgent.addBehaviour(new SendInNewOntology(msg));
@@ -112,8 +112,8 @@ public class Listen extends Behaviour {
             List<AID> resultsCollect = Arrays.stream(DFService.search(this.myAgent, templateCollect)).map(DFAgentDescription::getName).collect(Collectors.toList());
             List<AID> resultsTank = Arrays.stream(DFService.search(this.myAgent, templateTank)).map(DFAgentDescription::getName).collect(Collectors.toList());
 
-            ((SituatedAgent) myAgent).tankers = resultsTank.stream().map(AID::getLocalName).collect(Collectors.toList());
-            ((SituatedAgent) myAgent).allAgents = Stream.concat(Stream.concat(resultsExplo.stream(), resultsCollect.stream()) , resultsTank.stream()).map(AID::getLocalName).collect(Collectors.toList());
+            ((SituatedAgent) myAgent).tankers = resultsTank;
+            ((SituatedAgent) myAgent).allAgents = Stream.concat(Stream.concat(resultsExplo.stream(), resultsCollect.stream()), resultsTank.stream()).collect(Collectors.toList());
         } catch (FIPAException e) {
             e.printStackTrace();
         }

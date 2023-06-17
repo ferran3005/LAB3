@@ -48,7 +48,10 @@ public class ShoutOntology extends OneShotBehaviour {
         shoutMessage.setProtocol(SHOUT_ONTOLOGY_PROTOCOL_OUT);
         shoutMessage.setContent(modelJson);
 
-        getAllAgentNames().forEach( aid -> {if(!aid.getName().equals(this.myAgent.getAID().getName())) shoutMessage.addReceiver(aid);});
+        if(((SituatedAgent)myAgent).allAgents.isEmpty()) {
+            updateFromDF();
+        }
+        ((SituatedAgent)myAgent).allAgents.forEach( aid -> {if(!aid.getName().equals(this.myAgent.getAID().getName())) shoutMessage.addReceiver(aid);});
         ((AbstractDedaleAgent) this.myAgent).sendMessage(shoutMessage);
 
         msg.setPerformative(ACLMessage.INFORM);
@@ -56,7 +59,8 @@ public class ShoutOntology extends OneShotBehaviour {
         this.myAgent.send(msg);
     }
 
-    private List<AID> getAllAgentNames() {
+
+    private void updateFromDF() {
         DFAgentDescription templateExplo = new DFAgentDescription();
         DFAgentDescription templateCollect = new DFAgentDescription();
         DFAgentDescription templateTank = new DFAgentDescription();
@@ -78,10 +82,10 @@ public class ShoutOntology extends OneShotBehaviour {
             List<AID> resultsCollect = Arrays.stream(DFService.search(this.myAgent, templateCollect)).map(DFAgentDescription::getName).collect(Collectors.toList());
             List<AID> resultsTank = Arrays.stream(DFService.search(this.myAgent, templateTank)).map(DFAgentDescription::getName).collect(Collectors.toList());
 
-            return Stream.concat(Stream.concat(resultsExplo.stream(), resultsCollect.stream()) , resultsTank.stream()).collect(Collectors.toList());
+            ((SituatedAgent) myAgent).tankers = resultsTank;
+            ((SituatedAgent) myAgent).allAgents = Stream.concat(Stream.concat(resultsExplo.stream(), resultsCollect.stream()), resultsTank.stream()).collect(Collectors.toList());
         } catch (FIPAException e) {
             e.printStackTrace();
-            return Collections.emptyList();
         }
     }
 

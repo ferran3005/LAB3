@@ -48,7 +48,7 @@ public class ExplorerRouteHandler implements RouteHandler {
         route.clear();
         route = OntologyManager.shortestPathToTarget(model, situatedAgent.getLocalName(), (current) -> {
                     int randomNumber = new Random().nextInt(100);
-                    return randomNumber < 5;
+                    return randomNumber < 30;
                 }
         );
         return route.empty() ? computeRandomPath(model, situatedAgent, situatedData) : route.peek().getLocationId();
