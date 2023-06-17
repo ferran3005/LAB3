@@ -16,7 +16,9 @@ public class RegisterPlanBody extends BeliefGoalPlanBody {
         Agent agent = this.myAgent;
 
         final Object[] args = myAgent.getArguments();
-        String name = (String) args[1];
+        String name = "BDISituatedAgent06";
+        if(args.length > 0)
+            name = (String) args[1];
 
         DFAgentDescription dfd = new DFAgentDescription();
         dfd.setName(agent.getAID());

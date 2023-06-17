@@ -198,21 +198,14 @@ public class Principal {
         // The platform will not work unless all agents defined in the entities file are bound by name
         // to agents in this list.
         AgentController[] agentsToAdd = new AgentController[]{
-                newAgent("Lab", new String[] {"situated-agent06-explo1", "bdi06-explo1"}, SituatedAgent06.class),
-                newAgent("Lab2", new String[] {"situated-agent06-explo2", "bdi06-explo2"}, SituatedAgent06.class),
-                newAgent("Lab3", new String[] {"situated-agent06-collect1", "bdi06-collect1"}, SituatedAgent06.class),
-                newAgent("Tank", new String[] {"situated-agent06-tank1", "bdi06-tank1"}, SituatedAgent06.class),
+                newAgent("Lab", new String[] {}, SituatedAgent06.class),
 
-                //newDummyMovingAgent("ImHere"),
-                //newGolem("Golem1"),
-                //newGolem("Golem2"),
-                //newExploreCoopAgent("1stAgent", new String[]{"2ndAgent"}),
-                //newExploreCoopAgent("2ndAgent", new String[]{"1stAgent"}),
-                //newDummyMovingAgent("Explo1"),
-                //newExploreSoloAgent("Explo2"),
-                //newDummyMovingAgent("Explo3"),
-                //newCollectorAgent("Collect1"),
-                //newTankerAgent("Tanker1"),
+                // TODO para poder 4 agentes descomentar
+                //newAgent("Lab", new String[] {"situated-agent06-explo1", "bdi06-explo1"}, SituatedAgent06.class),
+                //newAgent("Lab2", new String[] {"situated-agent06-explo2", "bdi06-explo2"}, SituatedAgent06.class),
+                //newAgent("Lab3", new String[] {"situated-agent06-collect1", "bdi06-collect1"}, SituatedAgent06.class),
+                //newAgent("Tank", new String[] {"situated-agent06-tank1", "bdi06-tank1"}, SituatedAgent06.class),
+
         };
 
         for(AgentController ac: agentsToAdd) {
@@ -225,8 +218,12 @@ public class Principal {
         try {
             AgentController nonDedaleAgent =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
-                            "BDI1", BDIAgent06.class.getName(), new Object[] {"situated-agent06-explo1", "bdi06-explo1"});
-                AgentController nonDedaleAgent2 =
+                            "BDI1", BDIAgent06.class.getName(), new Object[] {});
+
+            // TODO para poder 4 agentes descomentar
+//            containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
+//                            "BDI1", BDIAgent06.class.getName(), new Object[] {"situated-agent06-explo1", "bdi06-explo1"});
+               /* AgentController nonDedaleAgent2 =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
                             "BDI2", BDIAgent06.class.getName(), new Object[] {"situated-agent06-explo2", "bdi06-explo2"});
                 AgentController nonDedaleAgent3 =
@@ -234,11 +231,14 @@ public class Principal {
                             "BDI3", BDIAgent06.class.getName(), new Object[] {"situated-agent06-collect1", "bdi06-collect1"});
             AgentController nonDedaleAgent4 =
                     containerList.get(ConfigurationFile.LOCAL_CONTAINER_NAME_AGENTS).createNewAgent(
-                            "BDI4", BDIAgent06.class.getName(), new Object[] {"situated-agent06-tank1", "bdi06-tank1"});
+                            "BDI4", BDIAgent06.class.getName(), new Object[] {"situated-agent06-tank1", "bdi06-tank1"});*/
+
             agentList.add(nonDedaleAgent);
-            agentList.add(nonDedaleAgent2);
+
+            // TODO para poder 4 agentes descomentar
+           /* agentList.add(nonDedaleAgent2);
             agentList.add(nonDedaleAgent3);
-            agentList.add(nonDedaleAgent4);
+            agentList.add(nonDedaleAgent4); */
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }

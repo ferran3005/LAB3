@@ -24,9 +24,11 @@ public class FindSituatedPlanBody extends BeliefGoalPlanBody {
         ServiceDescription templateSd = new ServiceDescription();
 
         final Object[] args = myAgent.getArguments();
-        String situatedRegName = (String) args[0];
-        templateSd.setName(situatedRegName);
+        String situatedRegName = "SituatedAgent06";
+        if(args.length > 0)
+            situatedRegName = (String) args[0];
 
+        templateSd.setName(situatedRegName);
         template.addServices(templateSd);
         DFAgentDescription[] results;
         try {

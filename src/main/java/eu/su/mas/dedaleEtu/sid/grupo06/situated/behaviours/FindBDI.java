@@ -1,5 +1,6 @@
 package eu.su.mas.dedaleEtu.sid.grupo06.situated.behaviours;
 
+import eu.su.mas.dedaleEtu.sid.grupo06.BDIAgent06;
 import eu.su.mas.dedaleEtu.sid.grupo06.SituatedAgent06;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
@@ -14,7 +15,10 @@ public class FindBDI extends Behaviour {
 
     public FindBDI(String bdiName) {
         super();
-        this.bdiName = bdiName;
+        if(bdiName == null){
+            this.bdiName = "BDISituatedAgent06";
+        }
+        else this.bdiName = bdiName;
     }
     @Override
     public void action() {

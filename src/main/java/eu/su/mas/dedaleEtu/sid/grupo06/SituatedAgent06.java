@@ -32,8 +32,13 @@ public class SituatedAgent06 extends AbstractDedaleAgent {
         List<Behaviour> lb = new ArrayList<>();
         final Object[] args = getArguments();
         EntityCharacteristics entity = (EntityCharacteristics) args[0];
-        String name = (String) args[2];
-        String bdiName = (String) args[3];
+        String name = null;
+        String bdiName = null;
+
+        if(args.length > 2){
+            name = (String) args[2];
+            bdiName = (String) args[3];
+        }
 
         int lock = 0;
         int strength= 0;

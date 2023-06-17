@@ -14,7 +14,10 @@ public class RegisterDF extends OneShotBehaviour {
 
     public RegisterDF(Agent a, String name) {
         super(a);
-        this.name = name;
+        if(name == null){
+            this.name = "SituatedAgent06";
+        }
+        else this.name = name;
     }
     @Override
     public void action() {
